@@ -1,0 +1,24 @@
+<html>
+  <head>
+    <title>Item Catalog</title>
+  </head>
+  <body>
+    <header class='categoryListHeader'>
+      <h1>Catalog Application</h1>
+    </header>
+    <div class='categoryList'>
+      {% if categories == [] %}
+        <h3>No Categories Listed</h3>
+      {% else %}
+        {% for c in categories %}
+          <div class='categoryName'>
+            <span class='name'><p>{{c.name}}</p></span>
+          </div>
+        {% endfor %}
+      {% endif %}
+    </div>
+    <div class=recentlyAddedItemsList>
+      <!-- Insert code for the recently added item list -->
+    </div>
+  </body>
+</html>

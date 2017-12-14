@@ -70,8 +70,8 @@ def showCategory(category_id):
             creator=creator)
 
 # 13. Method to add an item. - UNFINISHED & UNTESTED
-@app.route('/catalog/<int:category_id>/add', methods=['GET', 'POST'])
-def addItem(category_id):
+@app.route('/catalog/<int:category_id>/new', methods=['GET', 'POST'])
+def newItem(category_id):
     category = session.query(Category).filter_by(id=category_id).one()
     if 'username' not in login_session:
         return redirect('/login')
@@ -91,11 +91,66 @@ def addItem(category_id):
             return redirect(url_for('showCategory', category_id=category_id))
         else:
             return render_template('addItem.html', category_id=category_id)
-# 14. Method to show descrition of a certain itme. - UNFINISHED & UNTESTED
 
-# 15. Method to edit an item name & description.- UNFINISHED & UNTESTED
+# 14. Method to show description of a certain itme. - UNTESTED
+@app.route('/catalog/<int:category_id>/<int:item_id>')
+def showItem(category_id, item_id):
+    category = session.query(Category).filter_by(id=category_id).one()
+    item = session.query(Item).filter_by(id=item_id).one()
+    if 'username' not in login_session or creator.id !=
+        login_session['user_id']:
+        return render_template('publicItem.html', item=item,
+            description=description, creator=creator)
+    else:
+        return render_template('item.html', item=item, description=description,
+            creator=creator)
 
-# 16. Method to delete an item. - UNFINISHED & UNTESTED
+# 15. Method to edit an item name & description.- UNTESTED
+@app.route('catalog/<int:category_id>/<int:item_id>/edit')
+def editItem(category_id, item_id):
+    if 'username' not in login_session:
+        return redirect('/login')
+    category = session.query(Category).filter_by(id=category_id).one()
+    editedItem = session.query(Item).filter_by(id=item_id).one()
+    if login_session['user_id'] != category.user_id:
+        return """<script>function myFunction() {alert('You are not authorized
+            to edit menu items to this restaurant. Please create your own
+            restaurant in order to edit items.');}</script><body
+            onload='myFunction()'>"""
+    if request.method == 'POST':
+        if request.form['name']:
+            editedItem.name = request.form['name']
+        if request.form['description']:
+            editedItem.name = request.form['description']
+        session.add(editedItem)
+        session.commit()
+        flash('Menu Item Successfully Edited')
+        return redirect(url_for('showItem', category_id=category_id,
+            editedIted=item_id))
+    else:
+        return render_template('editItem.html', category_id=category_id,
+            item_id=item_id, item=editedItem)
+
+# 16. Method to delete an item. - UNTESTED
+@app.route('catalog/<int:category_id>/<int:item_id>/delete')
+def deleteItem(category_id, item_id):
+    if 'username' not in login_session:
+        return redirect('/login')
+    category = session.query(Category).filter_by(id=category_id).one()
+    itemToDelete = session.query(Item).filter_by(id=item_id).one()
+    if login_session['user_id'] != category.user_id:
+        return """<script>function myFunction() {alert('You are not authorized
+            to edit menu items to this restaurant. Please create your own
+            restaurant in order to edit items.');}</script><body
+            onload='myFunction()'>"""
+    if request.method == 'POST':
+        session.delete(itemToDelete)
+        session.commit()
+        flash('Item Successfully Deleted')
+        return redirect(url_for('showItem', category_id=category_id,
+            itemToDelete=item_id))
+    else:
+        return render_template('deleteItem.html', item=itemToDelete)
 
 if __name__ == '__main__':
     app.secrect_key = 'super_secret_key'

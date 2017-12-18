@@ -7,6 +7,7 @@
       <h1>Catalog Application</h1>
     </header>
     <div class='categoryList'>
+      <h2 id='categoryListTitle'>Categories</h2>
       {% if categories == [] %}
         <h3>No Categories Listed</h3>
       {% else %}
@@ -17,8 +18,17 @@
         {% endfor %}
       {% endif %}
     </div>
-    <div class=recentlyAddedItemsList>
-      <!-- Insert code for the recently added item list -->
+    <div class=recentItemsList>
+      <h2 id='recentItemsTitle'>Recent Items</h2>
+      {% if items == [] %}
+        <h3>No Items</h3>
+      {% else %}
+        {% for i in items %}
+          <div class='itemName'>
+            <span class='name'><p>{{i.0}} ({{i.1}})</p></span>
+          </div>
+        {% endfor %}
+      {% endif %}
     </div>
   </body>
 </html>

@@ -1,0 +1,38 @@
+<html>
+  <head>
+    <title>Item Catalog</title>
+  </head>
+  <body>
+    <header class='categoryListHeader'>
+      <h1>Catalog Application</h1>
+      <!-- Insert code for here user login details -->
+    </header>
+    <div class='categoryList'>
+      <h2 id='categoryListTitle'>Categories</h2>
+      {% if categories == [] %}
+        <h3>No Categories Listed</h3>
+      {% else %}
+        {% for c in categories %}
+          <div class='categoryName'>
+            <span class='name'><p>{{c.name}}</p></span>
+          </div>
+        {% endfor %}
+      {% endif %}
+    </div>
+    <div class=itemsList>
+      {% for cat in category %}
+        <h2 id='itemTitle'>{{cat.name}} Items</h2>
+      {% endfor %}
+      <!-- Insert code for item list -->
+      {% if items == [] %}
+        <h3>No Items</h3>
+      {% else %}
+        {% for i in items %}
+          <div class='itemName'>
+            <span class='name'><p>{{i.name}}</p></span>
+          </div>
+        {% endfor %}
+      {% endif %}
+    </div>
+  </body>
+</html>

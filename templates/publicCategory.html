@@ -14,7 +14,11 @@
       {% else %}
         {% for c in categories %}
           <div class='categoryName'>
-            <span class='name'><p>{{c.name}}</p></span>
+            <span class='name'>
+              <a href='{{url_for('showCategory',current_category = c.name,)}}'>
+                <p>{{c.name}}</p>
+              </a>
+            </span>
           </div>
         {% endfor %}
       {% endif %}

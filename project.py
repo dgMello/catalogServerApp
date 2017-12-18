@@ -68,10 +68,8 @@ def getUserID(email):
 def showCategories():
     categories = session.query(Category).order_by(Category.name)
     itemCount = session.query(func.count(Item.id))
-    print itemCount
     recentItems = session.query(Item.name, Category.name).\
         join(Item.category).order_by(Item.id.desc()).limit(5)
-    print recentItems
     if 'username' not in login_session:
         return render_template('publicCategories.html', categories=categories,
             items=recentItems)
@@ -99,27 +97,34 @@ def showCategory(current_category):
 
 
 # 13. Method to add an item. - UNFINISHED & UNTESTED
-@app.route('/catalog/<current_category>/new', methods=['GET', 'POST'])
-def newItem(current_category):
-    category = session.query(Category).filter_by(id=category_id).one()
-    if 'username' not in login_session:
-        return redirect('/login')
-    category = session.query(Category).filter_by(id=category_id).one()
-    if login_session['user_id'] != category.user_id:
-        return """<script>function myFunction() {alert('You are not authorized
-            to add menu items to this restaurant. Please create your own
-            restaurant in order to add items.');}</script><body
-            onload='myFunction()'>"""
-        if request.method == 'POST':
-            newItem = Item(name=request.form['name'],
-            description=request.form['description'], category_id=category_id,
-            user_id=restaurant.user_id)
-            session.add(newItem)
-            session.commit()
-            flash('New Menu %s Item Successfully Created' % (newItem.name))
-            return redirect(url_for('showCategory', current_category=name))
-        else:
-            return render_template('addItem.html', category_id=category_id)
+@app.route('/catalog/item/new', methods=['GET', 'POST'])
+def newItem():
+    categories = session.query(Category).order_by(Category.name)
+    # if 'username' not in login_session:
+    #     return redirect('/login')
+    # if login_session['user_id'] != category.user_id:
+        # return """<script>function myFunction() {alert('You are not authorized
+            # to add menu items to this restaurant. Please create your own
+            # restaurant in order to add items.');}</script><body
+            # onload='myFunction()'>"""
+    # Indent this section after finishing the above section.
+    if request.method == 'POST':
+        categoryID = request.form['categorySelection']
+        categoryIDSearch = session.query(Category).filter\
+            (Category.id==categoryID)
+        for c in categoryIDSearch:
+            categoryUserID = c.user_id
+        newItem = Item(name=request.form['name'],
+            description=request.form['description'],
+            category_id=request.form['categorySelection'],
+            user_id=categoryUserID)
+        session.add(newItem)
+        session.commit()
+        # flash('New Menu %s Item Successfully Created' % (newItem.name))
+        return redirect(url_for('showCategories', categories=categories))
+    else:
+        return render_template('addItem.html',
+            categories=categories)
 
 # 14. Method to show description of a certain itme. - UNTESTED
 @app.route('/catalog/<current_category>/<current_item>')

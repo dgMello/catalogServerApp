@@ -1,0 +1,19 @@
+<html>
+  <head>
+    {% for i in item %}
+      <title>{{i.name}}</title>
+    {% endfor %}
+  </head>
+  <body>
+    <header class='categoryListHeader'>
+      <a href='{{url_for('showCategories')}}'><h1>Catalog Application</h1></a>
+      <!-- Insert code for login here. -->
+    </header>
+    <div class="nameAndDescription">
+      {% for i in item %}
+        <h2>{{i.name}}</h2>
+        <p>{{i.description}}</p>
+      {% endfor %}
+    </div>
+  </body>
+</html>

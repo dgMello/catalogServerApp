@@ -30,7 +30,10 @@
       {% else %}
         {% for i in items %}
           <div class='itemName'>
-            <span class='name'><p>{{i.0}} ({{i.1}})</p></span>
+            <a href='{{url_for('showItem', current_category = i.1,
+              current_item = i.0)}}'>
+              <span class='name'><p>{{i.0}} ({{i.1}})</p></span>
+            </a>
           </div>
         {% endfor %}
       {% endif %}

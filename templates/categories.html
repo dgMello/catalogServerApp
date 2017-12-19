@@ -22,17 +22,23 @@
         {% endfor %}
       {% endif %}
     </div>
-    <div class=recentItemsList>
-      <h2 id='recentItemsTitle'>Recent Items</h2>
-      {% if items == [] %}
-        <h3>No Items</h3>
-      {% else %}
-        {% for i in items %}
-          <div class='itemName'>
-            <span class='name'><p>{{i.0}} ({{i.1}})</p></span>
-          </div>
-        {% endfor %}
-      {% endif %}
+    <div class=itemsList>
+      <a href='{{url_for('newItem')}}'>Add Item</a>
+      <div class=recentItemsList>
+        <h2 id='recentItemsTitle'>Recent Items</h2>
+        {% if items == [] %}
+          <h3>No Items</h3>
+        {% else %}
+          {% for i in items %}
+            <div class='itemName'>
+              <a href='{{url_for('showItem', current_category = i.1(),
+                current_item = i.0)}}'>
+                <span class='name'><p>{{i.0}} ({{i.1}})</p></span>
+              </a>
+            </div>
+          {% endfor %}
+        {% endif %}
+      </div>
     </div>
   </body>
 </html>

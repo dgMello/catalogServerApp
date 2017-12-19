@@ -66,6 +66,7 @@ def getUserID(email):
 @app.route('/')
 @app.route('/catalog/')
 def showCategories():
+    login_session = 'Doug Mello'
     categories = session.query(Category).order_by(Category.name)
     itemCount = session.query(func.count(Item.id))
     recentItems = session.query(Item.name, Category.name).\
@@ -86,14 +87,15 @@ def showCategory(current_category):
     for i in currentCategory:
         categoryID = i.id
         categoryUserID = i.user_id
+        categoryName = i.name
     creator = getUserInfo(categoryUserID)
     items = session.query(Item).filter_by(category_id=categoryID)
     if 'username' not in login_session or creator.id != login_session['user_id']:
         return render_template('publicCategory.html', items=items,
-        creator=creator, category=currentCategory, categories=categories)
+        creator=creator, category=categoryName, categories=categories)
     else:
         return render_templates('category.html', items=items, creator=creator,
-            category=currentCategory, categories=categories)
+            category=categoryName, categories=categories)
 
 
 # 13. Method to add an item. - UNFINISHED & UNTESTED
@@ -129,17 +131,16 @@ def newItem():
 # 14. Method to show description of a certain itme. - UNTESTED
 @app.route('/catalog/<current_category>/<current_item>')
 def showItem(current_category, current_item):
-    category = session.query(Category).filter_by(id=category_id).one()
-    item = session.query(Item).filter_by(id=item_id).one()
+    category = session.query(Category).filter_by(name = current_category.title())
+    item = session.query(Item).filter_by(name=current_item)
     if 'username' not in login_session or creator.id != login_session['user_id']:
-        return render_template('publicItem.html', item=item,
-            description=description, creator=creator)
+        return render_template('publicItem.html', item=item)
     else:
-        return render_template('item.html', item=item, description=description,
-            creator=creator)
+        return render_template('item.html', item=item)
+# creator=creator
 
 # 15. Method to edit an item name & description.- UNTESTED
-@app.route('/catalog/<current_category>/<current_item>/edit')
+@app.route('/catalog/<current_item>/edit')
 def editItem(current_category, current_item):
     if 'username' not in login_session:
         return redirect('/login')
@@ -165,7 +166,7 @@ def editItem(current_category, current_item):
             item_id=item_id, item=editedItem)
 
 # 16. Method to delete an item. - UNTESTED
-@app.route('/catalog/<current_category>/<current_item>/delete')
+@app.route('/catalog/<current_item>/delete')
 def deleteItem(current_category, current_item):
     if 'username' not in login_session:
         return redirect('/login')

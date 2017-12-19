@@ -4,7 +4,7 @@
   </head>
   <body>
     <header class='categoryListHeader'>
-      <h1>Catalog Application</h1>
+      <a href='{{url_for('showCategories')}}'><h1>Catalog Application</h1></a>
       <!-- Insert code for here user login details -->
     </header>
     <div class='categoryList'>
@@ -24,16 +24,16 @@
       {% endif %}
     </div>
     <div class=itemsList>
-      {% for cat in category %}
-        <h2 id='itemTitle'>{{cat.name}} Items</h2>
-      {% endfor %}
-      <!-- Insert code for item list -->
+      <h2 id='itemTitle'>{{category}} Items</h2>
       {% if items == [] %}
         <h3>No Items</h3>
       {% else %}
         {% for i in items %}
           <div class='itemName'>
-            <span class='name'><p>{{i.name}}</p></span>
+            <a href='{{url_for('showItem', current_category = category.title(),
+              current_item = i.name)}}'
+              <span class='name'><p>{{i.name}}</p></span>
+            </a>
           </div>
         {% endfor %}
       {% endif %}

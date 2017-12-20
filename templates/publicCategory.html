@@ -15,7 +15,7 @@
         {% for c in categories %}
           <div class='categoryName'>
             <span class='name'>
-              <a href='{{url_for('showCategory',current_category = c.name,)}}'>
+              <a href='{{url_for('showCategory', current_category = c.name)}}'>
                 <p>{{c.name}}</p>
               </a>
             </span>
@@ -30,7 +30,7 @@
       {% else %}
         {% for i in items %}
           <div class='itemName'>
-            <a href='{{url_for('showItem', current_category = category.title(),
+            <a href='{{url_for('showItem', current_category = category,
               current_item = i.name)}}'
               <span class='name'><p>{{i.name}}</p></span>
             </a>

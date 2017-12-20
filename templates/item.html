@@ -1,8 +1,6 @@
 <html>
   <head>
-    {% for i in item %}
-      <title>{{i.name}}</title>
-    {% endfor %}
+      <title>{{item.name}}</title>
   </head>
   <body>
     <header class='categoryListHeader'>
@@ -10,10 +8,12 @@
       <!-- Insert code for user info here -->
     </header>
     <div class="nameAndDescription">
-      {% for i in item %}
-        <h2>{{i.name}}</h2>
-        <p>{{i.description}}</p>
-      {% endfor %}
+      <h2>{{item.name}}</h2>
+      <p>{{item.description}}</p>
+    </div>
+    <div class="editAndDeleteButton">
+      <a href='{{url_for('editItem', current_item = item.name)}}'>Edit</a>
+      <a href='{{url_for('deleteItem', current_item = item.name)}}'>Delete</a>
     </div>
   </body>
 </html>

@@ -15,7 +15,8 @@
           <option value='{{c.id}}'>{{c.name}}</option>
         {% endfor %}
       <input type='submit' value='Create'>
-      <a href='{{url_for('showCategory', current_category=currentCategory)}}'>Cancel</a>
+      <a href='{{url_for('showCategory', current_category=currentCategory)}}'>
+        Cancel</a>
     </form>
   </body>
 </html>

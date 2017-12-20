@@ -112,10 +112,8 @@ def newItem():
     # Indent this section after finishing the above section.
     if request.method == 'POST':
         categoryID = request.form['categorySelection']
-        categoryIDSearch = session.query(Category).filter\
+        categoryUserID = session.query(Category.user_id).filter\
             (Category.id==categoryID)
-        for c in categoryIDSearch:
-            categoryUserID = c.user_id
         newItem = Item(name=request.form['name'],
             description=request.form['description'],
             category_id=request.form['categorySelection'],
@@ -131,8 +129,9 @@ def newItem():
 # 14. Method to show description of a certain itme. - UNTESTED
 @app.route('/catalog/<current_category>/<current_item>')
 def showItem(current_category, current_item):
-    category = session.query(Category).filter_by(name = current_category.title())
-    item = session.query(Item).filter_by(name=current_item)
+    category = session.query(Category).filter_by\
+        (name = current_category.title())
+    item = session.query(Item).filter_by(name=current_item).one()
     if 'username' not in login_session or creator.id != login_session['user_id']:
         return render_template('publicItem.html', item=item)
     else:
@@ -141,29 +140,33 @@ def showItem(current_category, current_item):
 
 # 15. Method to edit an item name & description.- UNTESTED
 @app.route('/catalog/<current_item>/edit')
-def editItem(current_category, current_item):
-    if 'username' not in login_session:
-        return redirect('/login')
-    category = session.query(Category).filter_by(id=category_id).one()
-    editedItem = session.query(Item).filter_by(id=item_id).one()
-    if login_session['user_id'] != category.user_id:
-        return """<script>function myFunction() {alert('You are not authorized
-            to edit menu items to this restaurant. Please create your own
-            restaurant in order to edit items.');}</script><body
-            onload='myFunction()'>"""
+def editItem(current_item):
+    # if 'username' not in login_session:
+    #    return redirect('/login')
+    editedItem = session.query(Item).filter_by(name=current_item).one()
+    category = session.query(Category).filter_by\
+        (id=editedItem.category_id).one()
+    categories = session.query(Category).order_by(Category.name)
+    # if login_session['user_id'] != category.user_id:
+    #     return """<script>function myFunction() {alert('You are not authorized
+    #         to edit menu items to this restaurant. Please create your own
+    #         restaurant in order to edit items.');}</script><body
+    #         onload='myFunction()'>"""
     if request.method == 'POST':
         if request.form['name']:
             editedItem.name = request.form['name']
         if request.form['description']:
-            editedItem.name = request.form['description']
+            editedItem.description = request.form['description']
+        if request.form['categorySelection']:
+            editedItem.category = request.form['categorySelection']
         session.add(editedItem)
         session.commit()
-        flash('Menu Item Successfully Edited')
-        return redirect(url_for('showItem', category_id=category_id,
-            editedIted=item_id))
+        # flash('Menu Item Successfully Edited')
+        return redirect(url_for('showItem', current_category=category.name,
+            current_item=editedItem.name))
     else:
-        return render_template('editItem.html', category_id=category_id,
-            item_id=item_id, item=editedItem)
+        return render_template('editItem.html', item=editedItem,
+            category=category, categories=categories)
 
 # 16. Method to delete an item. - UNTESTED
 @app.route('/catalog/<current_item>/delete')

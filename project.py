@@ -139,7 +139,7 @@ def showItem(current_category, current_item):
 # creator=creator
 
 # 15. Method to edit an item name & description.- UNTESTED
-@app.route('/catalog/<current_item>/edit')
+@app.route('/catalog/<current_item>/edit', methods=['GET', 'POST'])
 def editItem(current_item):
     # if 'username' not in login_session:
     #    return redirect('/login')
@@ -158,7 +158,7 @@ def editItem(current_item):
         if request.form['description']:
             editedItem.description = request.form['description']
         if request.form['categorySelection']:
-            editedItem.category = request.form['categorySelection']
+            editedItem.category_id = request.form['categorySelection']
         session.add(editedItem)
         session.commit()
         # flash('Menu Item Successfully Edited')
@@ -169,25 +169,27 @@ def editItem(current_item):
             category=category, categories=categories)
 
 # 16. Method to delete an item. - UNTESTED
-@app.route('/catalog/<current_item>/delete')
-def deleteItem(current_category, current_item):
-    if 'username' not in login_session:
-        return redirect('/login')
-    category = session.query(Category).filter_by(id=category_id).one()
-    itemToDelete = session.query(Item).filter_by(id=item_id).one()
-    if login_session['user_id'] != category.user_id:
-        return """<script>function myFunction() {alert('You are not authorized
-            to edit menu items to this restaurant. Please create your own
-            restaurant in order to edit items.');}</script><body
-            onload='myFunction()'>"""
+@app.route('/catalog/<current_item>/delete', methods=['GET', 'POST'])
+def deleteItem(current_item):
+    # if 'username' not in login_session:
+    #     return redirect('/login')
+    itemToDelete = session.query(Item).filter_by(name=current_item).one()
+    category = session.query(Category).filter_by\
+        (id=itemToDelete.category_id).one()
+    categories = session.query(Category).order_by(Category.name)
+    # if login_session['user_id'] != category.user_id:
+    #     return """<script>function myFunction() {alert('You are not authorized
+    #         to edit menu items to this restaurant. Please create your own
+    #         restaurant in order to edit items.');}</script><body
+    #         onload='myFunction()'>"""
     if request.method == 'POST':
         session.delete(itemToDelete)
         session.commit()
-        flash('Item Successfully Deleted')
-        return redirect(url_for('showItem', category_id=category_id,
-            itemToDelete=item_id))
+        # flash('Item Successfully Deleted')
+        return redirect(url_for('showCategories'))
     else:
-        return render_template('deleteItem.html', item=itemToDelete)
+        return render_template('deleteItem.html', item=itemToDelete,
+            category=category, categories=categories)
 
 if __name__ == '__main__':
     app.secrect_key = 'super_secret_key'

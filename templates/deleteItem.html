@@ -1,0 +1,19 @@
+<html>
+  <head>
+    <title>Delete Item</title>
+  </head>
+  <body>
+    <header class='applicationNameHeader'>
+      <h1>Catalog Application</h1>
+      <!-- Insert code for user info here -->
+    </header>
+    <h2>Delete Item</h2>
+    <form action='{{url_for('deleteItem', current_item=item.name)}}'
+      method='post'>
+      <p>Are you sure you want to delete {{item.name}}</p>
+      <input type='submit' value='Delete'>
+      <a href='{{url_for('showItem', current_category = category.name,
+        current_item = item.name)}}'>Cancel</a>
+    </form>
+  </body>
+</html>

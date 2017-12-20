@@ -3,19 +3,23 @@
     <title>Edit Item</title>
   </head>
   <body>
-    <h1>Edit Item</h1>
-    <form action='{{url_for('editItem', current_item = item.name)}}'
+    <header class='applicationNameHeader'>
+      <h1>Catalog Application</h1>
+      <!-- Insert code for user info here -->
+    </header>
+    <h2>Edit Item</h2>
+    <form action='{{url_for('editItem', current_item=item.name)}}'
       method='post'>
       <p>Name:</p>
       <input type='text' maxlength="100" name='name'
-        placeholder='{{item.name}}'>
+        value='{{item.name}}'>
       <p>Description:</p>
       <textarea type='text' maxlength="250" rows='5' cols='40'
-        name='description' placeholder='{{item.description}}'></textarea>
+        name='description'>{{item.description}}</textarea>
       <p>Category</p>
       <select name='categorySelection'>
         {% for c in categories %}
-          <option value='{{c.name}}'
+          <option value='{{c.id}}'
             {% if category.name == c.name %}selected{% endif %}>
             {{c.name}}</option>
         {% endfor %}

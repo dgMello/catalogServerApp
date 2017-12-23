@@ -14,12 +14,12 @@ import requests
 
 app = Flask(__name__)
 
-# Create Client ID.
-# CLIENT_ID = json.loads(
-    # open('client_secrets.json', 'r').read())['web']['client_id']
-# APPLICATION_NAME = 'Catelog Application'
 
-#Connect to database and create database session
+# Create Client ID.
+CLIENT_ID = json.loads(open('client_secrets.json', 'r').read())['web']['client_id']
+APPLICATION_NAME = 'Catelog Application'
+
+# Connect to database and create database session
 engine = create_engine('sqlite:///itemcatalog.db')
 Base.metadata.bind = engine
 
@@ -27,6 +27,12 @@ DBSession = sessionmaker(bind=engine)
 session = DBSession()
 
 # 1 Create anti-forgery state toekon - UNFINISHED & UNTESTED
+@app.route('/login')
+def showLogin():
+    state = ''.join(random.choice(string.ascii_uppercase + string.digits)
+        for x in xrange(32))
+    login_session['state'] = state
+    return render_template('login.html', STATE=state)
 
 # 2 Facebook login methods - UNFINISHED & UNTESTED
 
@@ -58,11 +64,26 @@ def getUserID(email):
 
 # 8. Method for dissconnecting from google sign in. - UNFINISHED & UNTESTED
 
-# 9. Method to get JSON APIs of the categories. - UNFINISHED & UNTESTED
+# 9. Method to get JSON APIs of all categories
+@app.route('/catalog.json')
+def catalogsJSON():
+    categories = session.query(Category).all()
+    return jsonify(categories=[c.serialize for c in categories])
 
-# 10. Method to get JSON APIs of the items in a certain category. - UNFINISHED & UNTESTED
+# 10. Method to get JSON APIs of the items in a certain category.
+@app.route('/catalog/<current_category>.json')
+def categoryJSON(current_category):
+    category = session.query(Category).filter_by(name=current_category).one()
+    items = session.query(Item).filter_by(category_id=category.id).all()
+    return jsonify(Items=[i.serialize for i in items])
 
-# 11.  Method to show all categorires & latest items added.
+# 11. Method to get JSON APIs of a certain item.
+@app.route('/catalog/<current_category>/<current_item>.json')
+def itemJSON(current_category, current_item):
+    item = session.query(Item).filter_by(name=current_item).one()
+    return jsonify(item=item.serialize)
+
+# 12.  Method to show all categorires & latest items added.
 @app.route('/')
 @app.route('/catalog/')
 def showCategories():
@@ -78,27 +99,24 @@ def showCategories():
         return render_template('categories.html', categories=categories,
             items=recentItems)
 
-# 12. Method to show all items in a category - UNTESTED
+# 13. Method to show all items in a category
 @app.route('/catalog/<current_category>/items')
 def showCategory(current_category):
     categories = session.query(Category).order_by(Category.name)
     currentCategory = session.query(Category).filter_by\
-        (name = current_category.title())
-    for i in currentCategory:
-        categoryID = i.id
-        categoryUserID = i.user_id
-        categoryName = i.name
-    creator = getUserInfo(categoryUserID)
-    items = session.query(Item).filter_by(category_id=categoryID)
+        (name = current_category.title()).one()
+    creator = getUserInfo(currentCategory.user_id)
+    items = session.query(Item).filter_by(category_id=currentCategory.id)
     if 'username' not in login_session or creator.id != login_session['user_id']:
         return render_template('publicCategory.html', items=items,
-        creator=creator, category=categoryName, categories=categories)
+            creator=creator, category=currentCategory,
+            categories=categories)
     else:
         return render_templates('category.html', items=items, creator=creator,
-            category=categoryName, categories=categories)
+            category=currentCategory.name, categories=categories)
 
 
-# 13. Method to add an item. - UNFINISHED & UNTESTED
+# 14. Method to add an item
 @app.route('/catalog/item/new', methods=['GET', 'POST'])
 def newItem():
     categories = session.query(Category).order_by(Category.name)
@@ -126,7 +144,7 @@ def newItem():
         return render_template('addItem.html',
             categories=categories)
 
-# 14. Method to show description of a certain itme. - UNTESTED
+# 15. Method to show description of a certain itme.
 @app.route('/catalog/<current_category>/<current_item>')
 def showItem(current_category, current_item):
     category = session.query(Category).filter_by\
@@ -138,7 +156,7 @@ def showItem(current_category, current_item):
         return render_template('item.html', item=item)
 # creator=creator
 
-# 15. Method to edit an item name & description.- UNTESTED
+# 16. Method to edit an item name & description.
 @app.route('/catalog/<current_item>/edit', methods=['GET', 'POST'])
 def editItem(current_item):
     # if 'username' not in login_session:
@@ -168,7 +186,7 @@ def editItem(current_item):
         return render_template('editItem.html', item=editedItem,
             category=category, categories=categories)
 
-# 16. Method to delete an item. - UNTESTED
+# 17. Method to delete an item.
 @app.route('/catalog/<current_item>/delete', methods=['GET', 'POST'])
 def deleteItem(current_item):
     # if 'username' not in login_session:
@@ -192,6 +210,6 @@ def deleteItem(current_item):
             category=category, categories=categories)
 
 if __name__ == '__main__':
-    app.secrect_key = 'super_secret_key'
     app.debug = True
+    app.secret_key = 'super_secret_key'
     app.run(host='0.0.0.0', port=8000)

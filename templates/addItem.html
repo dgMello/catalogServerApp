@@ -1,10 +1,12 @@
 <html>
   <head>
     <title>Add New Item</title>
+    <link rel='stylesheet' type='text/css' href='/static/styles.css'>
   </head>
   <body>
     <header class='applicationNameHeader'>
       <h1>Catalog Application</h1>
+      <a href='{{url_for('disconnect')}}'>Logout</a>
     </header>
     <h2>Create New Item</h2>
     <form action='{{url_for('newItem')}}' method='post'>

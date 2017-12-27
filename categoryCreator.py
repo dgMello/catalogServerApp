@@ -18,11 +18,11 @@ DBSession = sessionmaker(bind=engine)
 # session.rollback()
 session = DBSession()
 
-User1 = User(name="Doug Mello", email="dmello88@gamil.com")
+User1 = User(name="Phill Casserly", email='Test@test.com')
 session.add(User1)
 session.commit()
 
-category1 = Category(user_id=1, name="Shirts")
+category1 = Category(name="Shirts")
 
 session.add(category1)
 session.commit()
@@ -54,7 +54,7 @@ session.commit()
 
 
 
-category2 = Category(user_id=1, name="Pants")
+category2 = Category(name="Pants")
 
 session.add(category2)
 session.commit()
@@ -86,7 +86,7 @@ session.commit()
 
 
 
-category3 = Category(user_id=1, name="Hats")
+category3 = Category(name="Hats")
 
 session.add(category3)
 session.commit()
@@ -117,7 +117,7 @@ session.add(item4)
 session.commit()
 
 
-category4 = Category(user_id=1, name="Jackets")
+category4 = Category(name="Jackets")
 
 session.add(category4)
 session.commit()

@@ -1,12 +1,12 @@
 <html>
   <head>
       <title>{{item.name}}</title>
+      <link rel='stylesheet' type='text/css' href='/static/styles.css'>
   </head>
   <body>
     <header class='applicationNameHeader'>
       <a href='{{url_for('showCategories')}}'><h1>Catalog Application</h1></a>
-      <!-- <a href="">Logout </a> -->
-      <!-- Insert code for user info here -->
+      <a href='{{url_for('disconnect')}}'>Logout</a>
     </header>
     <div class="nameAndDescription">
       <h2>{{item.name}}</h2>

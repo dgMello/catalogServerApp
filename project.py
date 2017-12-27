@@ -26,7 +26,7 @@ Base.metadata.bind = engine
 DBSession = sessionmaker(bind=engine)
 session = DBSession()
 
-# 1 Create anti-forgery state toekon - UNFINISHED & UNTESTED
+# Create anti-forgery state toekon
 @app.route('/login')
 def showLogin():
     state = ''.join(random.choice(string.ascii_uppercase + string.digits)
@@ -34,11 +34,72 @@ def showLogin():
     login_session['state'] = state
     return render_template('login.html', STATE=state)
 
-# 2 Facebook login methods - UNFINISHED & UNTESTED
+# Facebook login methods
+@app.route('/fbconnect', methods=['POST'])
+def fbconnect():
+    if request.args.get('state') != login_session['state']:
+        response = make_response(json.dumps('Invalid state parameter.'), 401)
+        response.headers['Content-Type'] = 'application/json'
+        return response
+    access_token = request.data
+    print "access token received %s " % access_token
 
-# 3 Method for dissconnecting from fabebook - UNFINISHED & UNTESTED
+    # Exchange client token for long-lived server side token.
+    app_id = json.loads(open('fb_client_secrets.json', 'r').read())['web'][
+        'app_id']
+    app_secret = json.loads(open('fb_client_secrets.json', 'r').read())['web'][
+        'app_secret']
+    url = ('https://graph.facebook.com/oauth/access_token?grant_type=fb_exchange_token&client_id=%s&client_secret=%s&fb_exchange_token=%s'
+        % (app_id, app_secret, access_token))
+    h = httplib2.Http()
+    result = h.request(url, 'GET')[1]
 
-# 4. Google login method - UNFINISHED & UNTESTED
+    # Use token to get user info from API
+    userinfo_url = 'https:/graph.facebook.com/v2.11/me'
+    # Remove expire tag from token
+    token = result.split(',')[0].split(':')[1].replace('"', '')
+    print token
+
+    url = ('https://graph.facebook.com/v2.11/me?access_token=%s&fields=name,id,email' % token)
+    print url
+    h = httplib2.Http()
+    result = h.request(url, 'GET')[1]
+    # Get data from API request
+    data = json.loads(result)
+    login_session['provider'] = 'facebook'
+    login_session['username'] = data['name']
+    login_session['email'] = data['email']
+    login_session['facebook_id'] = data['id']
+
+    # Check to see if this a new user. If not create a user profile
+    user_id = getUserID(login_session['email'])
+    if not user_id:
+        user_id = createUser(login_session)
+    login_session['user_id'] = user_id
+
+    output = ''
+    output += '<h1>Welcome, '
+    output += login_session['username']
+
+    output += '!</h1>'
+    output += '<img src="'
+    output += ''' " style = "width: 300px: height: 300px; border-radius:150px;
+        -webkit-border-radius: 150px; -moz-border-radius: 150px;">'''
+    flash("you are now logged in as %s" % login_session['username'])
+    return output
+
+
+# Method for dissconnecting from fabebook
+@app.route('/fbdisconnect')
+def fbdisconnect():
+    facebook_id = login_session['facebook_id']
+    access_token = login_session['access_token']
+    url = 'https://graph.facebook.com/%s/permissions' % facebook_id
+    h = httplib2.Http()
+    result = h.request(url, 'DELETE')[1]
+    return 'You have been logged out.'
+
+# Google login method
 @app.route('/gconnect', methods=['POST'])
 def gconnect():
     # Validate state token
@@ -86,6 +147,7 @@ def gconnect():
         return response
 
     # Store the access token in the session for later use.
+    login_session['provider'] = 'google'
     login_session['access_token'] = credentials.access_token
     login_session['gplus_id'] = gplus_id
 
@@ -99,6 +161,11 @@ def gconnect():
     login_session['picture'] = data['picture']
     login_session['email'] = data['email']
 
+    user_id = getUserID(login_session['email'])
+    if not user_id:
+        user_id = createUser(login_session)
+    login_session['user_id'] = user_id
+
     output = ''
     output += '<h1>Welcome, '
     output += login_session['username']
@@ -110,21 +177,40 @@ def gconnect():
     flash("you are now logged in as %s" % login_session['username'])
     return output
 
-# 5.  Method for created a user. - UNTESTED
+@app.route('/disconnect')
+def disconnect():
+    if 'provider' in login_session:
+        if login_session['provider'] == 'google':
+            gdisconnect()
+            del login_session['gplus_id']
+        if login_session['provider'] == 'facebook':
+            fbdisconnect()
+            del login_session['facebook_id']
+        del login_session['username']
+        del login_session['email']
+        del login_session['user_id']
+        del login_session['provider']
+        flash('You have successfully been logged out.')
+        return redirect(url_for('showCategories'))
+    else:
+        flash('You were not logged in to begin with!')
+        return redirect(url_for('showCategories'))
+
+# Method for created a user.
 def createUser(login_session):
     newUser = User(name=login_session['username'], email=login_session[
-                   'email'], picture=login_session['picture'])
+        'email'], picture=login_session['picture'])
     session.add(newUser)
     session.commit()
     user = session.query(User).filter_by(email=login_session['email']).one()
     return user.id
 
-# 6. Method for getting user info. -  UNTESTED
+# Method for getting user info.
 def getUserInfo(user_id):
     user = session.query(User).filter_by(id=user_id).one()
     return user
 
-# 7. Method for getting user ID. - UNTESTED
+# Method for getting user ID.
 def getUserID(email):
     try:
         user = session.query(User).filter_by(email=email).one()
@@ -132,7 +218,7 @@ def getUserID(email):
     except:
         return None
 
-# 8. Method for dissconnecting from google sign in. - UNFINISHED & UNTESTED
+# Method for dissconnecting from google sign in.
 @app.route('/gdisconnect')
 def gdisconnect():
     # Only disconnect a connected user.
@@ -142,24 +228,13 @@ def gdisconnect():
         response = make_response(json.dumps('Current user not connected.'), 401)
         response.headers['Content-Type'] = 'application/json'
         return response
-    print 'In gdisconnect access token is %s', access_token
-    print 'User name is: '
-    print login_session['username']
     # Execute HTTP GET request to revoke current token.
     url = ('https://accounts.google.com/o/oauth2/revoke?token=%s'
         % login_session['access_token'])
     h = httplib2.Http()
     result = h.request(url, 'GET')[0]
-    print 'result is '
-    print result
-
     if result['status'] == '200':
         # Reset the user's session.
-        del login_session['access_token']
-        del login_session['gplus_id']
-        del login_session['username']
-        del login_session['email']
-        del login_session['picture']
         response = make_response(json.dumps('Successfully disconnected'), 200)
         response.headers['Content-Type'] = 'application/json'
         return response
@@ -194,10 +269,14 @@ def itemJSON(current_category, current_item):
 @app.route('/catalog/')
 def showCategories():
     categories = session.query(Category).order_by(Category.name)
+    users = session.query(User).order_by(User.name).all()
+    for u in users:
+        print u.name
+        print u.email
+        print u.id
     itemCount = session.query(func.count(Item.id))
     recentItems = session.query(Item.name, Category.name).\
         join(Item.category).order_by(Item.id.desc()).limit(5)
-    print login_session
     if 'username' not in login_session:
         return render_template('publicCategories.html', categories=categories,
             items=recentItems)
@@ -226,20 +305,13 @@ def newItem():
     categories = session.query(Category).order_by(Category.name)
     if 'username' not in login_session:
         return redirect('/login')
-    if login_session['user_id'] != category.user_id:
-        return """<script>function myFunction() {alert('You are not authorized
-            to add menu items to this restaurant. Please create your own
-            restaurant in order to add items.');}</script><body
-            onload='myFunction()'>"""
     # Indent this section after finishing the above section.
     if request.method == 'POST':
         categoryID = request.form['categorySelection']
-        categoryUserID = session.query(Category.user_id).filter\
-            (Category.id==categoryID)
         newItem = Item(name=request.form['name'],
             description=request.form['description'],
             category_id=request.form['categorySelection'],
-            user_id=categoryUserID)
+            user_id=login_session['user_id'])
         session.add(newItem)
         session.commit()
         # flash('New Menu %s Item Successfully Created' % (newItem.name))
@@ -268,11 +340,6 @@ def editItem(current_item):
     category = session.query(Category).filter_by\
         (id=editedItem.category_id).one()
     categories = session.query(Category).order_by(Category.name)
-    if login_session['user_id'] != category.user_id:
-        return """<script>function myFunction() {alert('You are not authorized
-            to edit menu items to this restaurant. Please create your own
-            restaurant in order to edit items.');}</script><body
-            onload='myFunction()'>"""
     if request.method == 'POST':
         if request.form['name']:
             editedItem.name = request.form['name']
@@ -298,11 +365,6 @@ def deleteItem(current_item):
     category = session.query(Category).filter_by\
         (id=itemToDelete.category_id).one()
     categories = session.query(Category).order_by(Category.name)
-    if login_session['user_id'] != category.user_id:
-        return """<script>function myFunction() {alert('You are not authorized
-            to edit menu items to this restaurant. Please create your own
-            restaurant in order to edit items.');}</script><body
-            onload='myFunction()'>"""
     if request.method == 'POST':
         session.delete(itemToDelete)
         session.commit()

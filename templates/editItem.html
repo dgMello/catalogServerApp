@@ -1,11 +1,12 @@
 <html>
   <head>
     <title>Edit Item</title>
+    <link rel='stylesheet' type='text/css' href='/static/styles.css'>
   </head>
   <body>
     <header class='applicationNameHeader'>
       <h1>Catalog Application</h1>
-      <!-- Insert code for user info here -->
+      <a href='{{url_for('disconnect')}}'>Logout</a>
     </header>
     <h2>Edit Item</h2>
     <form action='{{url_for('editItem', current_item=item.name)}}'

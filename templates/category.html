@@ -1,12 +1,13 @@
 <html>
   <head>
     <title>Item Catalog</title>
+    <link rel='stylesheet' type='text/css' href='/static/styles.css'>
   </head>
   <body>
     <header class='applicationNameHeader'>
       <a href='{{url_for('showCategories')}}'><h1>Catalog Application</h1></a>
       <!-- <a href="or('disconnect')}}">Logout </a> -->
-      <!-- insert code for user info here. -->
+      <a href='{{url_for('disconnect')}}'>Logout</a>
     </header>
     <div class='categoryList'>
       <h2 id='categoryListTitle'>Categories</h2>

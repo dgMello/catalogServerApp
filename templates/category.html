@@ -5,6 +5,7 @@
   <body>
     <header class='applicationNameHeader'>
       <a href='{{url_for('showCategories')}}'><h1>Catalog Application</h1></a>
+      <!-- <a href="or('disconnect')}}">Logout </a> -->
       <!-- insert code for user info here. -->
     </header>
     <div class='categoryList'>
@@ -30,8 +31,8 @@
       {% else %}
         {% for i in items %}
           <div class='itemName'>
-            <a href='{{url_for('showItem', current_category = category.name,
-              current_item = i.name)}}'
+            <a href='{{url_for('showItem', current_category = category,
+              current_item = i.name)}}'>
               <span class='name'><p>{{i.name}}</p></span>
             </a>
           </div>

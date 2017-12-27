@@ -31,7 +31,7 @@
         {% for i in items %}
           <div class='itemName'>
             <a href='{{url_for('showItem', current_category = category.name,
-              current_item = i.name)}}'
+              current_item = i.name)}}'>
               <span class='name'><p>{{i.name}}</p></span>
             </a>
           </div>

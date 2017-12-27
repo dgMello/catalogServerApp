@@ -67,6 +67,8 @@ def gconnect():
     if result.get('error') is not None:
         response = make_response(json.dumps(result.get('error')), 500)
         response.headers['Content-Type'] = 'application/json'
+        return response
+
     # Verify that the acces token is used for the intended user.
     gplus_id = credentials.id_token['sub']
     if result['user_id'] != gplus_id:
@@ -81,16 +83,17 @@ def gconnect():
         response = make_response(json.dumps('Current user is already connected.'
             ), 200)
         response.headers['Content-Type'] = 'application/json'
+        return response
 
     # Store the access token in the session for later use.
-    login_session['credentials'] = credentials.access_token
+    login_session['access_token'] = credentials.access_token
     login_session['gplus_id'] = gplus_id
 
     # Get user info
     userinfo_url = "https://www.googleapis.com/oauth2/v2/userinfo"
     params = {'access_token': credentials.access_token, 'alt':'json'}
     answer = requests.get(userinfo_url, params=params)
-    data = json.loads(answer.text)
+    data = answer.json()
 
     login_session['username'] = data['name']
     login_session['picture'] = data['picture']
@@ -130,6 +133,42 @@ def getUserID(email):
         return None
 
 # 8. Method for dissconnecting from google sign in. - UNFINISHED & UNTESTED
+@app.route('/gdisconnect')
+def gdisconnect():
+    # Only disconnect a connected user.
+    access_token = login_session.get('access_token')
+    print access_token
+    if access_token is None:
+        response = make_response(json.dumps('Current user not connected.'), 401)
+        response.headers['Content-Type'] = 'application/json'
+        return response
+    print 'In gdisconnect access token is %s', access_token
+    print 'User name is: '
+    print login_session['username']
+    # Execute HTTP GET request to revoke current token.
+    url = ('https://accounts.google.com/o/oauth2/revoke?token=%s'
+        % login_session['access_token'])
+    h = httplib2.Http()
+    result = h.request(url, 'GET')[0]
+    print 'result is '
+    print result
+
+    if result['status'] == '200':
+        # Reset the user's session.
+        del login_session['access_token']
+        del login_session['gplus_id']
+        del login_session['username']
+        del login_session['email']
+        del login_session['picture']
+        response = make_response(json.dumps('Successfully disconnected'), 200)
+        response.headers['Content-Type'] = 'application/json'
+        return response
+    else:
+        # If you get a different repsonse from the google server.
+        response = make_response(json.dumps('''Failed to revoke token for given
+            user''', 400))
+        response.headers['Content-Type'] = 'application/json'
+        return response
 
 # 9. Method to get JSON APIs of all categories
 @app.route('/catalog.json')
@@ -154,11 +193,11 @@ def itemJSON(current_category, current_item):
 @app.route('/')
 @app.route('/catalog/')
 def showCategories():
-    login_session = 'Doug Mello'
     categories = session.query(Category).order_by(Category.name)
     itemCount = session.query(func.count(Item.id))
     recentItems = session.query(Item.name, Category.name).\
         join(Item.category).order_by(Item.id.desc()).limit(5)
+    print login_session
     if 'username' not in login_session:
         return render_template('publicCategories.html', categories=categories,
             items=recentItems)
@@ -172,14 +211,12 @@ def showCategory(current_category):
     categories = session.query(Category).order_by(Category.name)
     currentCategory = session.query(Category).filter_by\
         (name = current_category.title()).one()
-    creator = getUserInfo(currentCategory.user_id)
     items = session.query(Item).filter_by(category_id=currentCategory.id)
-    if 'username' not in login_session or creator.id != login_session['user_id']:
+    if 'username' not in login_session:
         return render_template('publicCategory.html', items=items,
-            creator=creator, category=currentCategory,
-            categories=categories)
+            category=currentCategory.name, categories=categories)
     else:
-        return render_templates('category.html', items=items, creator=creator,
+        return render_template('category.html', items=items,
             category=currentCategory.name, categories=categories)
 
 
@@ -187,13 +224,13 @@ def showCategory(current_category):
 @app.route('/catalog/item/new', methods=['GET', 'POST'])
 def newItem():
     categories = session.query(Category).order_by(Category.name)
-    # if 'username' not in login_session:
-    #     return redirect('/login')
-    # if login_session['user_id'] != category.user_id:
-        # return """<script>function myFunction() {alert('You are not authorized
-            # to add menu items to this restaurant. Please create your own
-            # restaurant in order to add items.');}</script><body
-            # onload='myFunction()'>"""
+    if 'username' not in login_session:
+        return redirect('/login')
+    if login_session['user_id'] != category.user_id:
+        return """<script>function myFunction() {alert('You are not authorized
+            to add menu items to this restaurant. Please create your own
+            restaurant in order to add items.');}</script><body
+            onload='myFunction()'>"""
     # Indent this section after finishing the above section.
     if request.method == 'POST':
         categoryID = request.form['categorySelection']
@@ -215,28 +252,27 @@ def newItem():
 @app.route('/catalog/<current_category>/<current_item>')
 def showItem(current_category, current_item):
     category = session.query(Category).filter_by\
-        (name = current_category.title())
+        (name = current_category.title()).one()
     item = session.query(Item).filter_by(name=current_item).one()
-    if 'username' not in login_session or creator.id != login_session['user_id']:
+    if 'username' not in login_session:
         return render_template('publicItem.html', item=item)
     else:
         return render_template('item.html', item=item)
-# creator=creator
 
 # 16. Method to edit an item name & description.
 @app.route('/catalog/<current_item>/edit', methods=['GET', 'POST'])
 def editItem(current_item):
-    # if 'username' not in login_session:
-    #    return redirect('/login')
+    if 'username' not in login_session:
+        return redirect('/login')
     editedItem = session.query(Item).filter_by(name=current_item).one()
     category = session.query(Category).filter_by\
         (id=editedItem.category_id).one()
     categories = session.query(Category).order_by(Category.name)
-    # if login_session['user_id'] != category.user_id:
-    #     return """<script>function myFunction() {alert('You are not authorized
-    #         to edit menu items to this restaurant. Please create your own
-    #         restaurant in order to edit items.');}</script><body
-    #         onload='myFunction()'>"""
+    if login_session['user_id'] != category.user_id:
+        return """<script>function myFunction() {alert('You are not authorized
+            to edit menu items to this restaurant. Please create your own
+            restaurant in order to edit items.');}</script><body
+            onload='myFunction()'>"""
     if request.method == 'POST':
         if request.form['name']:
             editedItem.name = request.form['name']
@@ -256,17 +292,17 @@ def editItem(current_item):
 # 17. Method to delete an item.
 @app.route('/catalog/<current_item>/delete', methods=['GET', 'POST'])
 def deleteItem(current_item):
-    # if 'username' not in login_session:
-    #     return redirect('/login')
+    if 'username' not in login_session:
+        return redirect('/login')
     itemToDelete = session.query(Item).filter_by(name=current_item).one()
     category = session.query(Category).filter_by\
         (id=itemToDelete.category_id).one()
     categories = session.query(Category).order_by(Category.name)
-    # if login_session['user_id'] != category.user_id:
-    #     return """<script>function myFunction() {alert('You are not authorized
-    #         to edit menu items to this restaurant. Please create your own
-    #         restaurant in order to edit items.');}</script><body
-    #         onload='myFunction()'>"""
+    if login_session['user_id'] != category.user_id:
+        return """<script>function myFunction() {alert('You are not authorized
+            to edit menu items to this restaurant. Please create your own
+            restaurant in order to edit items.');}</script><body
+            onload='myFunction()'>"""
     if request.method == 'POST':
         session.delete(itemToDelete)
         session.commit()

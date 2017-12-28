@@ -4,17 +4,21 @@
       <link rel='stylesheet' type='text/css' href='/static/styles.css'>
   </head>
   <body>
-    <header class='applicationNameHeader'>
+    <header class='applicationHeader'>
       <a href='{{url_for('showCategories')}}'><h1>Catalog Application</h1></a>
-      <a href='{{url_for('disconnect')}}'>Logout</a>
+      <button id='logoutButton' value='Login'>
+        <a href='{{url_for('disconnect')}}'>Logout</a>
+      </button>
     </header>
-    <div class="nameAndDescription">
-      <h2>{{item.name}}</h2>
-      <p>{{item.description}}</p>
-    </div>
-    <div class="editAndDeleteButton">
-      <a href='{{url_for('editItem', current_item = item.name)}}'>Edit</a>
-      <a href='{{url_for('deleteItem', current_item = item.name)}}'>Delete</a>
-    </div>
+    <section class='mainSection'>
+      <div class="nameAndDescription">
+        <h2>{{item.name}}</h2>
+        <p>{{item.description}}</p>
+      </div>
+      <div class="editAndDeleteButton">
+        <a href='{{url_for('editItem', current_item = item.name)}}'>Edit</a>
+        <a href='{{url_for('deleteItem', current_item = item.name)}}'>Delete</a>
+      </div>
+    </section>
   </body>
 </html>

@@ -4,24 +4,28 @@
     <link rel='stylesheet' type='text/css' href='/static/styles.css'>
   </head>
   <body>
-    <header class='applicationNameHeader'>
+    <header class='applicationHeader'>
       <h1>Catalog Application</h1>
-      <a href='{{url_for('disconnect')}}'>Logout</a>
+      <button id='logoutButton' value='Login'>
+        <a href='{{url_for('disconnect')}}'>Logout</a>
+      </button>
     </header>
-    <h2>Create New Item</h2>
-    <form action='{{url_for('newItem')}}' method='post'>
-      <p>Name:</p>
-      <input type='text' size='30' name='name'>
-      <p>Description:</p>
-      <textarea type='text' rows='5' cols='40' name='description'></textarea>
-      <p>Category</p>
-      <select name='categorySelection'>
-        {% for c in categories %}
-          <option value='{{c.id}}'>{{c.name}}</option>
-        {% endfor %}
-      <input type='submit' value='Create'>
-      <a href='{{url_for('showCategories')}}'>
-        Cancel</a>
-    </form>
+    <section class='mainSection'>
+      <h2>Create New Item</h2>
+      <form action='{{url_for('newItem')}}' method='post'>
+        <p>Name:</p>
+        <input type='text' size='30' name='name'>
+        <p>Description:</p>
+        <textarea type='text' rows='5' cols='40' name='description'></textarea>
+        <p>Category</p>
+        <select name='categorySelection'>
+          {% for c in categories %}
+            <option value='{{c.id}}'>{{c.name}}</option>
+          {% endfor %}
+        <input type='submit' value='Create'>
+        <a href='{{url_for('showCategories')}}'>
+          Cancel</a>
+      </form>
+    </section>
   </body>
 </html>

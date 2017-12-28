@@ -4,40 +4,49 @@
     <link rel='stylesheet' type='text/css' href='/static/styles.css'>
   </head>
   <body>
-    <header class='applicationNameHeader'>
+    <header class='applicationHeader'>
       <a href='{{url_for('showCategories')}}'><h1>Catalog Application</h1></a>
-      <a id='loginButton' href='{{url_for('showLogin')}}'>Login</a>
+      <button id='loginButton' value='Login'>
+        <a href='{{url_for('showLogin')}}'>Login</a>
+      </button>
     </header>
-    <div class='categoryList'>
-      <h2 id='categoryListTitle'>Categories</h2>
-      {% if categories == [] %}
-        <h3>No Categories Listed</h3>
-      {% else %}
-        {% for c in categories %}
-          <div class='categoryName'>
-            <span class='name'>
-              <a href='{{url_for('showCategory', current_category = c.name)}}'>
-                <p>{{c.name}}</p>
+    <section class='mainSection'>
+      <div class='categoryList'>
+        <h2 id='categoryListTitle'>Categories</h2>
+        {% if categories == [] %}
+          <h3>No Categories Listed</h3>
+        {% else %}
+          {% for c in categories %}
+            <div class='categoryName'>
+              <span class='name'>
+                <a href='{{url_for('showCategory',
+                  current_category = c.name,)}}'>
+                  <p>{{c.name}}</p>
+                </a>
+              </span>
+            </div>
+          {% endfor %}
+        {% endif %}
+        <script>
+          document.getElementById('{{category}}').style.backgroundColor =
+            '#e6e6e6';
+        </script>
+      </div>
+      <div class=itemsList>
+        <h2 id='itemTitle'>{{category}} Items</h2>
+        {% if items == [] %}
+          <h3>No Items</h3>
+        {% else %}
+          {% for i in items %}
+            <div class='itemName'>
+              <a href='{{url_for('showItem', current_category = category,
+                current_item = i.name)}}'>
+                <span class='name'><p>{{i.name}}</p></span>
               </a>
-            </span>
-          </div>
-        {% endfor %}
-      {% endif %}
-    </div>
-    <div class=itemsList>
-      <h2 id='itemTitle'>{{category.name}} Items</h2>
-      {% if items == [] %}
-        <h3>No Items</h3>
-      {% else %}
-        {% for i in items %}
-          <div class='itemName'>
-            <a href='{{url_for('showItem', current_category = category,
-              current_item = i.name)}}'>
-              <span class='name'><p>{{i.name}}</p></span>
-            </a>
-          </div>
-        {% endfor %}
-      {% endif %}
-    </div>
+            </div>
+          {% endfor %}
+        {% endif %}
+      </div>
+    </section>
   </body>
 </html>

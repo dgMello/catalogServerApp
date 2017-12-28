@@ -4,16 +4,18 @@
     <link rel='stylesheet' type='text/css' href='/static/styles.css'>
   </head>
   <body>
-    <header class='applicationNameHeader'>
-      <h1>Catalog Application</h1>
-      <a id='loginButton' href='{{url_for('showLogin')}}'>Login</a>
+    <header class='applicationHeader'>
+      <h1 title='Catalog Application'>Catalog Application</h1>
+      <button id='loginButton' value='Login'>
+        <a href='{{url_for('showLogin')}}'>Login</a>
+      </button>
     </header>
     <section class='mainSection'>
       <div class='categoryList'>
         <h2 id='categoryListTitle'>Categories</h2>
         {% if categories == [] %}
           <h3>No Categories Listed</h3>
-          {% else %}
+        {% else %}
           {% for c in categories %}
             <div class='categoryName'>
               <span class='name'>

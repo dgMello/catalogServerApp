@@ -270,10 +270,6 @@ def itemJSON(current_category, current_item):
 def showCategories():
     categories = session.query(Category).order_by(Category.name)
     users = session.query(User).order_by(User.name).all()
-    for u in users:
-        print u.name
-        print u.email
-        print u.id
     itemCount = session.query(func.count(Item.id))
     recentItems = session.query(Item.name, Category.name).\
         join(Item.category).order_by(Item.id.desc()).limit(5)

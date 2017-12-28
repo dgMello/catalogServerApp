@@ -1,7 +1,43 @@
 * {
   border: 1px solid red;
+  background-color: lightgray;
 }
-
+body {
+  margin: 0;
+  padding: 0;
+}
 .applicationNameHeader {
-  background-color: lightblue;
+  background-color: #00284d;
+}
+h1 {
+  color: white;
+  width: 500px;
+  text-align: center;
+  background-color: #00284d;
+}
+#loginButton {
+  float: right;
+  width: 55px;
+  text-align: center;
+  background-color: #e65c00
+}
+.mainSection {
+  background-color: white;
+  width: 50%;
+  height: 50%;
+}
+h2 {
+  color: #00284d;
+}
+.categoryList {
+  width: 50%;
+  height: 100%;
+}
+.itemsList {
+  width: 50%;
+  height: 100%;
+}
+.recentItemsList {
+  width: 50%;
+  height: 100%;
 }

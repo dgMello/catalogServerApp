@@ -11,28 +11,41 @@ body {
   justify-content: space-between;
   width: 100%;
 }
-h1 {
+.headerName {
   color: white;
   margin-left: 20%;
   text-align: center;
   background-color: #00284d;
 }
+a:link {
+  text-decoration: none;
+}
+
 #loginButton, #logoutButton {
   width: 70px;
   height: 27px;
   vertical-align: center;
   text-align: center;
   background-color: #ff6600;
-  margin: 1%;
-  margin-top: 1.3%;
+  margin: 1.5%;
   margin-right: 20%;
   cursor: pointer;
 }
 #loginButton:hover, #logoutButton:hover {
   background-color: #e65c00;
 }
-.mainSection {
+.mainSection1 {
   display: flex;
+  background-color: white;
+  width: 60%;
+  height: 70%;
+  margin: auto;
+  margin-top: 50px;
+  border: 1px inset darkgray;
+}
+.mainSection2 {
+  display: flex;
+  flex-direction: column;
   background-color: white;
   width: 60%;
   height: 70%;
@@ -71,11 +84,29 @@ h2 {
 }
 .recentItemsList {
 }
-.categoryName, .itemName {
+.categoryName, .itemName, .itemNameCategory {
   border-top: 1px solid white;
   border-bottom: 1px solid white;
 }
 .categoryName:hover, .itemName:hover {
   border-top: 1px solid #cccccc;
   border-bottom: 1px solid #cccccc;
+}
+a.itemLink:link, a.categoryLink:link, a.recentItemLink:link {
+  color: orange;
+}
+a.itemLink:visited, a.categoryLink:visited, a.recentItemLink:visited {
+  color: orange;
+}
+a.loginLink:link, a.loginLink:visited, a.logoutLink:link, a.logoutLink:visited {
+  color: white;
+}
+.categoryLinkRecentItems {
+  font-style: italic;
+  margin-left: 2%;
+  color: gray;
+}
+.itemLink {
+  display: flex;
+  flex-direction: row;
 }

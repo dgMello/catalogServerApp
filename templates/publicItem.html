@@ -5,12 +5,14 @@
   </head>
   <body>
     <header class='applicationHeader'>
-      <a href='{{url_for('showCategories')}}'><h1>Catalog Application</h1></a>
-      <button id='loginButton' value='Login'>
-        <a href='{{url_for('showLogin')}}'>Login</a>
+      <a href='{{url_for('showCategories')}}' class='headerName'>
+        <h1 title='Catalog Application'>Catalog Application</h1>
+      </a>
+      <button id='loginButton' title='Login'>
+        <a href='{{url_for('showLogin')}}' class='loginLink'>Login</a>
       </button>
     </header>
-    <section class='mainSection'>
+    <section class='mainSection2'>
       <div class="nameAndDescription">
         <h2>{{item.name}}</h2>
         <p>{{item.description}}</p>

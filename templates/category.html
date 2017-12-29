@@ -5,12 +5,14 @@
   </head>
   <body>
     <header class='applicationHeader'>
-      <h1 class='headerName'><a href='{{url_for('showCategories')}}'>Catalog Application</a></h1>
-      <button id='logoutButton' value='Login'>
-        <a href='{{url_for('disconnect')}}' value='Login'>Logout</a>
+      <a href='{{url_for('showCategories')}}' class='headerName'>
+        <h1 title='Catalog Application'>Catalog Application</h1>
+      </a>
+      <button id='logoutButton' title='Logout'>
+        <a href='{{url_for('disconnect')}}' class='logoutLink'>Logout</a>
       </button>
     </header>
-    <section class='mainSection'>
+    <section class='mainSection1'>
       <div class='categoryList'>
         <h2 id='categoryListTitle'>Categories</h2>
         {% if categories == [] %}
@@ -18,12 +20,10 @@
         {% else %}
           {% for c in categories %}
             <div class='categoryName' id='{{c.name}}'>
-              <span class='name'>
-                <a href='{{url_for('showCategory',
-                  current_category = c.name,)}}'>
-                  <p>{{c.name}}</p>
-                </a>
-              </span>
+              <a href='{{url_for('showCategory',
+                current_category = c.name,)}}' class='categoryLink'>
+                <span class='name'><p>{{c.name}}</p></span>
+              </a>
             </div>
           {% endfor %}
         {% endif %}
@@ -40,7 +40,7 @@
           {% for i in items %}
             <div class='itemName'>
               <a href='{{url_for('showItem', current_category = category,
-                current_item = i.name)}}'>
+                current_item = i.name)}}' class='itemLink'>
                 <span class='name'><p>{{i.name}}</p></span>
               </a>
             </div>

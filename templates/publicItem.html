@@ -6,9 +6,10 @@
   <body>
     <header class='applicationHeader'>
       <a href='{{url_for('showCategories')}}' class='headerName'>
-        <h1 title='Catalog Application'>Catalog Application</h1>
+        <h1>Catalog Application</h1>
       </a>
-      <button id='loginButton' title='Login'>
+      <button type='button' onclick="location.href='{{url_for('showLogin')}}';"
+        id='loginButton'>
         <a href='{{url_for('showLogin')}}' class='loginLink'>Login</a>
       </button>
     </header>

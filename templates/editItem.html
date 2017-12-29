@@ -6,33 +6,36 @@
   <body>
     <header class='applicationHeader'>
       <a href='{{url_for('showCategories')}}' class='headerName'>
-        <h1 title='Catalog Application'>Catalog Application</h1>
+        <h1>Catalog Application</h1>
       </a>
-      <button id='logoutButton' title='Logout'>
+      <button type='button' onclick="location.href='{{url_for('disconnect')}}';"
+        id='logoutButton'>
         <a href='{{url_for('disconnect')}}' class='logoutLink'>Logout</a>
       </button>
     </header>
     <section class='mainSection2'>
-      <h2>Edit Item</h2>
-      <form action='{{url_for('editItem', current_item=item.name)}}'
-        method='post'>
-        <p>Name:</p>
-        <input type='text' maxlength="100" name='name'
-          value='{{item.name}}'>
-        <p>Description:</p>
-        <textarea type='text' maxlength="250" rows='5' cols='40'
-          name='description'>{{item.description}}</textarea>
-        <p>Category</p>
-        <select name='categorySelection'>
-        {% for c in categories %}
-          <option value='{{c.id}}'
-            {% if category.name == c.name %}selected{% endif %}>
-            {{c.name}}</option>
-        {% endfor %}
-        <input type='submit' value='Update'>
-        <a href='{{url_for('showItem', current_category = category.name,
-          current_item = item.name)}}'>Cancel</a>
-      </form>
+      <div class='editItem'>
+        <h2>Edit Item</h2>
+        <form action='{{url_for('editItem', current_item=item.name)}}'
+          method='post'>
+          <p>Name:</p>
+          <input type='text' maxlength="100" name='name'
+            value='{{item.name}}'>
+          <p>Description:</p>
+          <textarea type='text' maxlength="250" rows='5' cols='40'
+            name='description'>{{item.description}}</textarea>
+          <p>Category</p>
+          <select name='categorySelection'>
+            {% for c in categories %}
+              <option value='{{c.id}}'
+            {% if category.name == c.name %}selected{% endif %}>{{c.name}}
+            </option>
+          {% endfor %}
+          <input type='submit' value='Update'>
+          <a href='{{url_for('showItem', current_category = category.name,
+            current_item = item.name)}}'>Cancel</a>
+        </form>
+      </div>
     </section>
   </body>
 </html>

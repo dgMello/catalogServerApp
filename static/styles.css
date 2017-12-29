@@ -4,6 +4,7 @@
 body {
   background-color: lightgray;
   margin: 0;
+  padding: 0;
 }
 .applicationHeader {
   background-color: #00284d;
@@ -16,6 +17,8 @@ body {
   margin-left: 20%;
   text-align: center;
   background-color: #00284d;
+  font-weight: bold;
+  font-family: arial, sans-serif;
 }
 a:link {
   text-decoration: none;
@@ -55,12 +58,19 @@ a:link {
 }
 .mainLoginSection {
   display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
   background-color: white;
   width: 40%;
   height: 300px;
   margin: auto;
   margin-top: 50px;
   border: 1px inset darkgray;
+}
+.signInButtons {
+  display: flex;
+  justify-content: center;
 }
 h2 {
   color: #00284d;
@@ -72,6 +82,10 @@ h2 {
   margin: .5%;
   padding: .5%;
   vertical-align: top;
+}
+.nameAndDescription, .editItem, .addItem, .deleteItem, .editAndDeleteButton {
+  margin: .5%;
+  padding: .5%;
 }
 .itemsList, .addItemAndRecentItems {
   border-left: 1px solid lightgray;
@@ -88,15 +102,15 @@ h2 {
   border-top: 1px solid white;
   border-bottom: 1px solid white;
 }
-.categoryName:hover, .itemName:hover {
+.categoryName:hover, .itemName:hover, .itemNameCategory:hover {
   border-top: 1px solid #cccccc;
   border-bottom: 1px solid #cccccc;
 }
 a.itemLink:link, a.categoryLink:link, a.recentItemLink:link {
-  color: orange;
+  color: #e65c00;
 }
 a.itemLink:visited, a.categoryLink:visited, a.recentItemLink:visited {
-  color: orange;
+  color: #e65c00;
 }
 a.loginLink:link, a.loginLink:visited, a.logoutLink:link, a.logoutLink:visited {
   color: white;
@@ -109,4 +123,19 @@ a.loginLink:link, a.loginLink:visited, a.logoutLink:link, a.logoutLink:visited {
 .itemLink {
   display: flex;
   flex-direction: row;
+}
+p, h1, h2, h3, a {
+  font-family: Verdana, arial, sans-serif;
+}
+h1, h2 {
+  font-weight: bold;
+}
+p, a {
+}
+#fbsigninButton {
+  height: 30px;
+  margin: 2%;
+}
+#googleSigninButton {
+  margin: 2%;
 }

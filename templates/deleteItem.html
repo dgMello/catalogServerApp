@@ -6,21 +6,24 @@
   <body>
     <header class='applicationHeader'>
       <a href='{{url_for('showCategories')}}' class='headerName'>
-        <h1 title='Catalog Application'>Catalog Application</h1>
+        <h1>Catalog Application</h1>
       </a>
-      <button id='logoutButton' title='Logout'>
+      <button type='button' onclick="location.href='{{url_for('disconnect')}}';"
+        id='logoutButton'>
         <a href='{{url_for('disconnect')}}' class='logoutLink'>Logout</a>
       </button>
     </header>
     <section class='mainSection2'>
-      <h2>Delete Item</h2>
-      <form action='{{url_for('deleteItem', current_item=item.name)}}'
-        method='post'>
-        <p>Are you sure you want to delete {{item.name}}</p>
-        <input type='submit' value='Delete'>
-        <a href='{{url_for('showItem', current_category = category.name,
-          current_item = item.name)}}'>Cancel</a>
-      </form>
+      <div class='deleteItem'>
+        <h2>Delete Item</h2>
+        <form action='{{url_for('deleteItem', current_item=item.name)}}'
+          method='post'>
+          <p>Are you sure you want to delete {{item.name}}</p>
+          <input type='submit' value='Delete'>
+          <a href='{{url_for('showItem', current_category = category.name,
+            current_item = item.name)}}'>Cancel</a>
+        </form>
+      </div>
     </section>
   </body>
 </html>

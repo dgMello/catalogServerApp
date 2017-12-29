@@ -6,9 +6,10 @@
   <body>
     <header class='applicationHeader'>
       <a href='{{url_for('showCategories')}}' class='headerName'>
-        <h1 title='Catalog Application'>Catalog Application</h1>
+        <h1>Catalog Application</h1>
       </a>
-      <button id='loginButton' title='Login'>
+      <button type='button' onclick="location.href='{{url_for('showLogin')}}';"
+        id='loginButton'>
         <a href='{{url_for('showLogin')}}' class='loginLink'>Login</a>
       </button>
     </header>
@@ -16,7 +17,7 @@
       <div class='categoryList'>
         <h2 id='categoryListTitle'>Categories</h2>
         {% if categories == [] %}
-          <h3>No Categories Listed</h3>
+          <h3 title='No Categories Listed'>No Categories Listed</h3>
         {% else %}
           {% for c in categories %}
             <div class='categoryName'>
@@ -28,21 +29,23 @@
           {% endfor %}
         {% endif %}
       </div>
-      <div class=recentItemsList>
-        <h2 id='recentItemsTitle'>Recent Items</h2>
-        {% if items == [] %}
-          <h3>No Items</h3>
-        {% else %}
-          {% for i in items %}
-            <div class='itemName'>
-              <a href='{{url_for('showItem', current_category = i.1,
-                current_item = i.0)}}' class='.recentItemLink'>
-                <span class='name'><p>{{i.0}}</p></span>
-                <span class='categoryLinkRecentItems'><p> ({{i.1}})</p></span>
-              </a>
-            </div>
-          {% endfor %}
-        {% endif %}
+      <div class='addItemAndRecentItems'>
+        <div class=recentItemsList>
+          <h2 id='recentItemsTitle'>Recent Items</h2>
+          {% if items == [] %}
+            <h3>No Items</h3>
+          {% else %}
+            {% for i in items %}
+              <div class='itemNameCategory'>
+                <a href='{{url_for('showItem', current_category = i.1,
+                  current_item = i.0)}}' class='itemLink'>
+                  <span class='name'><p>{{i.0}}</p></span>
+                  <span class='categoryLinkRecentItems'><p> ({{i.1}})</p></span>
+                </a>
+              </div>
+            {% endfor %}
+          {% endif %}
+        <div>
       </div>
     </section>
   </body>

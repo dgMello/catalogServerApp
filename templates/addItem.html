@@ -1,34 +1,40 @@
+<!DOCTYPE html>
 <html>
   <head>
     <title>Add New Item</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel='stylesheet' type='text/css' href='/static/styles.css'>
   </head>
   <body>
     <header class='applicationHeader'>
-      <a href='{{url_for('showCategories')}}' class='headerName'>
-        <h1>Catalog Application</h1>
+      <a href="{{url_for('showCategories')}}" class='headerName'>
+        <h1>Catalog App</h1>
       </a>
       <button type='button' onclick="location.href='{{url_for('disconnect')}}';"
-        id='logoutButton'>
-        <a href='{{url_for('disconnect')}}' class='logoutLink'>Logout</a>
+        id='logoutButton'>Logout
       </button>
     </header>
     <section class='mainSection2'>
       <div class='addItem'>
         <h2>Create New Item</h2>
-        <form action='{{url_for('newItem')}}' method='post'>
+        <form action="{{url_for('newItem')}}" method='post' class='addItemForm'>
           <p>Name:</p>
           <input type='text' size='30' name='name'>
           <p>Description:</p>
-          <textarea type='text' rows='5' cols='40' name='description'></textarea>
+          <textarea rows='5' cols='38' name='description'>
+          </textarea>
           <p>Category</p>
           <select name='categorySelection'>
             {% for c in categories %}
               <option value='{{c.id}}'>{{c.name}}</option>
             {% endfor %}
-            <input type='submit' value='Create'>
-            <a href='{{url_for('showCategories')}}'>Cancel</a>
-          </form>
+          </select>
+          <div class='submitCancelButtons'>
+            <input type='submit' value='Create' id='addItemSubmitButton'>
+            <a href="{{url_for('showCategories')}}"
+              class='cancelButton'>Cancel</a>
+          </div>
+        </form>
       </div>
     </section>
   </body>

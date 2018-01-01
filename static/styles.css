@@ -1,141 +1,251 @@
-/* * {
-  border: 1px solid red;
-} */
+/* Gives the body a background color and removes margins & padding */
 body {
   background-color: lightgray;
   margin: 0;
   padding: 0;
 }
+/* Update the font-family for p, h1, h2, h3 & a */
+p, h1, h2, h3, a {
+  font-family: Verdana, arial, sans-serif;
+}
+/* Updates the font-weight of h1, h2  */
+h1, h2 {
+  font-weight: bold;
+}
+/* Update the font size of all h1 elements.. */
+h1 {
+  font-size: 1.5em;
+}
+/* Update color and top margin of all h1 */
+h2 {
+  color: #00284d;
+  margin-top: 1%;
+  font-size: 1.1em;
+}
+/* Update the font size of all p elements.. */
+p {
+  font-size: .9em;
+}
+/* Update a links to have no text decoration */
+a:link {
+  text-decoration: none;
+}
+/* Update all link except for cancel with a new color */
+a.itemLink:visited, a.categoryLink:visited, a.recentItemLink:visited,
+a#deleteButton:visited, a#editButton:visited, a.itemLink:link,
+a.categoryLink:link, a.recentItemLink:link, a#deleteButton:link,
+a#editButton:link, a#addItemButton:link, a#addItemButton:visited {
+  color: #e65c00;
+}
+/* Remove the default color for the cancel buttons. */
+a.cancelButton:link, a.cancelButton:visited {
+  color: black;
+}
+/* Updates the header with a new background color, display type and width. */
 .applicationHeader {
   background-color: #00284d;
   display: flex;
   justify-content: space-between;
   width: 100%;
 }
+/* Update the header name. */
 .headerName {
   color: white;
-  margin-left: 20%;
-  text-align: center;
+  margin-left: 10%;
   background-color: #00284d;
   font-weight: bold;
   font-family: arial, sans-serif;
 }
-a:link {
-  text-decoration: none;
-}
-
-#loginButton, #logoutButton {
-  width: 70px;
-  height: 27px;
-  vertical-align: center;
-  text-align: center;
-  background-color: #ff6600;
-  margin: 1.5%;
-  margin-right: 20%;
-  cursor: pointer;
-}
-#loginButton:hover, #logoutButton:hover {
-  background-color: #e65c00;
-}
+/* Update the main section 1. */
 .mainSection1 {
   display: flex;
   background-color: white;
-  width: 60%;
+  width: 80%;
   height: 70%;
   margin: auto;
-  margin-top: 50px;
+  margin-top: 40px;
   border: 1px inset darkgray;
 }
+/* Update the main section 2. */
 .mainSection2 {
   display: flex;
   flex-direction: column;
   background-color: white;
-  width: 60%;
+  width: 80%;
   height: 70%;
   margin: auto;
-  margin-top: 50px;
+  margin-top: 40px;
   border: 1px inset darkgray;
 }
+/* Udpate the main login section. */
 .mainLoginSection {
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
   background-color: white;
-  width: 40%;
+  width: 60%;
   height: 300px;
   margin: auto;
-  margin-top: 50px;
+  margin-top: 40px;
   border: 1px inset darkgray;
 }
+/* Update the google and facebook signin buttons. */
 .signInButtons {
   display: flex;
   justify-content: center;
+  flex-direction: column;
 }
-h2 {
-  color: #00284d;
-  margin-top: 10px;
-}
-.categoryList, .itemsList, .addItemAndRecentItems {
-  width: 400px;
-  height: 75%;
-  margin: .5%;
-  padding: .5%;
+/* Update category, item, and recent items list. */
+.categoryList, .itemsList, .addItemAndRecentItems, .recentItems {
+  width: 50%;
+  height: 90%;
+  margin: 2%;
   vertical-align: top;
+  padding-top: 0px;
 }
-.nameAndDescription, .editItem, .addItem, .deleteItem, .editAndDeleteButton {
-  margin: .5%;
-  padding: .5%;
-}
-.itemsList, .addItemAndRecentItems {
-  border-left: 1px solid lightgray;
-  padding-left: 30px;
-}
+/* Update the category list width.. */
 .categoryList {
-  width: 150px;
+  width: 32%
 }
-.itemsList {
+/* Update name, descriptions, edit, add, delete and edit/delete buttons. */
+.nameAndDescription, .editItem, .addItem, .deleteItem, .editAndDeleteButton {
+  margin: 1%;
+  padding: 1%;
 }
-.recentItemsList {
+/* Update color and decoration of edit and delete buttons. */
+.editAndDeleteButton:link {
+  text-decoration: none;
+  color: #e65c00;
 }
-.categoryName, .itemName, .itemNameCategory {
+/* Update border and padding left of item list and recent items list. */
+.itemsList, .addItemAndRecentItems, .recentItems {
+  border-left: 1px solid lightgray;
+  padding-left: 25px;
+  margin-left: 10px;
+}
+/* Update recent item list top margin to align with category list */
+.recentItems {
+  padding-top: 0;
+}
+/* Update category, item & recent item lists. */
+.categoryNameSection, .itemNameSection, .itemNameCategory {
   border-top: 1px solid white;
   border-bottom: 1px solid white;
 }
-.categoryName:hover, .itemName:hover, .itemNameCategory:hover {
+/* Add a color border if the cursor is over items, recent items and category. */
+.categoryNameSection:hover, .itemNameSection:hover, .itemNameCategory:hover {
   border-top: 1px solid #cccccc;
   border-bottom: 1px solid #cccccc;
 }
-a.itemLink:link, a.categoryLink:link, a.recentItemLink:link {
-  color: #e65c00;
-}
-a.itemLink:visited, a.categoryLink:visited, a.recentItemLink:visited {
-  color: #e65c00;
-}
-a.loginLink:link, a.loginLink:visited, a.logoutLink:link, a.logoutLink:visited {
-  color: white;
-}
+/* update the category in the recent items list. */
 .categoryLinkRecentItems {
   font-style: italic;
   margin-left: 2%;
   color: gray;
 }
-.itemLink {
-  display: flex;
-  flex-direction: row;
+/* Update the item name width. */
+.itemNameSection {
+  width: 40%
 }
-p, h1, h2, h3, a {
-  font-family: Verdana, arial, sans-serif;
-}
-h1, h2 {
+/* Update the add and edit item form with bold font. */
+.addItemForm, .editItemForm {
   font-weight: bold;
 }
-p, a {
+/* Style the flash div. */
+.flash {
+  width: 25%;
+  margin: auto;
+  margin-top: 0;
+  margin-bottom: 0;
+  margin-left: 45%;
+  padding: 0;
 }
+/* Style the flash messages */
+.flashMessage {
+  list-style-type: none;
+  margin: 0;
+  color: red;
+}
+/* Update the Submit buttons' margin. */
+#addItemSubmitButton, #editItemSubmitButton {
+  margin: 2%;
+  margin-left: 2px;
+}
+/* Update the facebook signin button height & margin */
 #fbsigninButton {
   height: 30px;
   margin: 2%;
 }
+/* Update the google signin button margin.  */
 #googleSigninButton {
   margin: 2%;
+}
+/* Update the deleteButton and editButton margin. */
+#deleteButton, #editButton {
+  margin: .2%;
+}
+/* Update the edit button. */
+#editButton {
+  border-right: 1px black solid;
+  padding-right: 2%;
+}
+/* Update the login/logout button. */
+#loginButton, #logoutButton {
+  color: white;
+  width: 70px;
+  height: 27px;
+  vertical-align: center;
+  text-align: center;
+  background-color: #ff6600;
+  margin: auto;
+  margin-right: 10%;
+  cursor: pointer;
+}
+/* Make the logout/login button change color when cursor is over it. */
+#loginButton:hover, #logoutButton:hover {
+  background-color: #e65c00;
+}
+/* Set breakpoint for 870px */
+@media only screen and (min-width: 870px) {
+  h1 {
+    font-size: 1.7em;
+  }
+  .categoryList {
+    width: 25%;
+  }
+  #editButton {
+    padding-right: 1%;
+  }
+}
+/* Set breakpoint for 1200px */
+@media only screen and (min-width: 1200px) {
+  h1 {
+    font-size: 2em;
+  }
+  h2 {
+    font-size: 1.5em;
+  }
+  .signInButtons {
+    flex-direction: row;
+  }
+  .mainLoginSection {
+    width: 30%;
+  }
+  .mainSection1, .mainSection2 {
+    width: 70%;
+  }
+  .headerName {
+    margin-left: 15%;
+  }
+  .itemLink {
+    display: flex;
+    flex-direction: row;
+  }
+  .categoryList {
+    width: 15%;
+  }
+  #loginButton, #logoutButton {
+    margin-right: 15%;
+  }
 }

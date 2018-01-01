@@ -16,7 +16,8 @@ app = Flask(__name__)
 
 
 # Create Client ID.
-CLIENT_ID = json.loads(open('client_secrets.json', 'r').read())['web']['client_id']
+CLIENT_ID = json.loads(open('client_secrets.json', 'r').read())['web'][
+    'client_id']
 APPLICATION_NAME = 'Catelog Application'
 
 # Connect to database and create database session
@@ -34,7 +35,7 @@ def showLogin():
     login_session['state'] = state
     return render_template('login.html', STATE=state)
 
-# Facebook login methods
+# This method enables login through Facebook.
 @app.route('/fbconnect', methods=['POST'])
 def fbconnect():
     if request.args.get('state') != login_session['state']:
@@ -58,10 +59,9 @@ def fbconnect():
     userinfo_url = 'https:/graph.facebook.com/v2.11/me'
     # Remove expire tag from token
     token = result.split(',')[0].split(':')[1].replace('"', '')
-    print token
 
-    url = ('https://graph.facebook.com/v2.11/me?access_token=%s&fields=name,id,email' % token)
-    print url
+    url = ('https://graph.facebook.com/v2.11/me?access_token=%s&fields=name,id,email'
+        % token)
     h = httplib2.Http()
     result = h.request(url, 'GET')[1]
     # Get data from API request
@@ -89,7 +89,7 @@ def fbconnect():
     return output
 
 
-# Method for dissconnecting from fabebook
+# Method for disconnecting from fabebook
 @app.route('/fbdisconnect')
 def fbdisconnect():
     facebook_id = login_session['facebook_id']
@@ -99,7 +99,7 @@ def fbdisconnect():
     result = h.request(url, 'DELETE')[1]
     return 'You have been logged out.'
 
-# Google login method
+# This method enables login from Google.
 @app.route('/gconnect', methods=['POST'])
 def gconnect():
     # Validate state token
@@ -129,7 +129,6 @@ def gconnect():
         response = make_response(json.dumps(result.get('error')), 500)
         response.headers['Content-Type'] = 'application/json'
         return response
-
     # Verify that the acces token is used for the intended user.
     gplus_id = credentials.id_token['sub']
     if result['user_id'] != gplus_id:
@@ -145,12 +144,10 @@ def gconnect():
             ), 200)
         response.headers['Content-Type'] = 'application/json'
         return response
-
     # Store the access token in the session for later use.
     login_session['provider'] = 'google'
     login_session['access_token'] = credentials.access_token
     login_session['gplus_id'] = gplus_id
-
     # Get user info
     userinfo_url = "https://www.googleapis.com/oauth2/v2/userinfo"
     params = {'access_token': credentials.access_token, 'alt':'json'}
@@ -177,6 +174,7 @@ def gconnect():
     flash("you are now logged in as %s" % login_session['username'])
     return output
 
+# This method enables the user to disconect from Google or Facebook.
 @app.route('/disconnect')
 def disconnect():
     if 'provider' in login_session:
@@ -196,7 +194,7 @@ def disconnect():
         flash('You were not logged in to begin with!')
         return redirect(url_for('showCategories'))
 
-# Method for created a user.
+# Method for creating a new user.
 def createUser(login_session):
     newUser = User(name=login_session['username'], email=login_session[
         'email'], picture=login_session['picture'])
@@ -218,7 +216,7 @@ def getUserID(email):
     except:
         return None
 
-# Method for dissconnecting from google sign in.
+# Method for disconnecting from google sign in.
 @app.route('/gdisconnect')
 def gdisconnect():
     # Only disconnect a connected user.
@@ -249,7 +247,8 @@ def gdisconnect():
 @app.route('/catalog.json')
 def catalogsJSON():
     categories = session.query(Category).all()
-    return jsonify(categories=[c.serialize for c in categories])
+    return jsonify(categories=[c.serialize for c in categories],
+        items=[i.serialize for i in items])
 
 # 10. Method to get JSON APIs of the items in a certain category.
 @app.route('/catalog/<current_category>.json')
@@ -295,7 +294,7 @@ def showCategory(current_category):
             category=currentCategory.name, categories=categories)
 
 
-# 14. Method to add an item
+# 14. Method to create a new item.
 @app.route('/catalog/item/new', methods=['GET', 'POST'])
 def newItem():
     categories = session.query(Category).order_by(Category.name)
@@ -310,13 +309,13 @@ def newItem():
             user_id=login_session['user_id'])
         session.add(newItem)
         session.commit()
-        # flash('New Menu %s Item Successfully Created' % (newItem.name))
+        flash('New Item %s Successfully Created' % (newItem.name))
         return redirect(url_for('showCategories', categories=categories))
     else:
         return render_template('addItem.html',
             categories=categories)
 
-# 15. Method to show description of a certain itme.
+# 15. Method to show description & name of a certain itme.
 @app.route('/catalog/<current_category>/<current_item>')
 def showItem(current_category, current_item):
     category = session.query(Category).filter_by\
@@ -327,7 +326,7 @@ def showItem(current_category, current_item):
     else:
         return render_template('item.html', item=item)
 
-# 16. Method to edit an item name & description.
+# 16. Method to edit an item name, description & category.
 @app.route('/catalog/<current_item>/edit', methods=['GET', 'POST'])
 def editItem(current_item):
     if 'username' not in login_session:
@@ -345,7 +344,7 @@ def editItem(current_item):
             editedItem.category_id = request.form['categorySelection']
         session.add(editedItem)
         session.commit()
-        # flash('Menu Item Successfully Edited')
+        flash('Item Successfully Edited')
         return redirect(url_for('showItem', current_category=category.name,
             current_item=editedItem.name))
     else:
@@ -364,7 +363,7 @@ def deleteItem(current_item):
     if request.method == 'POST':
         session.delete(itemToDelete)
         session.commit()
-        # flash('Item Successfully Deleted')
+        flash('Item Successfully Deleted')
         return redirect(url_for('showCategories'))
     else:
         return render_template('deleteItem.html', item=itemToDelete,

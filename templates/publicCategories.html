@@ -1,16 +1,19 @@
+<!DOCTYPE html>
 <html>
   <head>
     <title>Item Catalog</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel='stylesheet' type='text/css' href='/static/styles.css'>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js">
+    </script>
   </head>
   <body>
     <header class='applicationHeader'>
-      <a href='{{url_for('showCategories')}}' class='headerName'>
-        <h1>Catalog Application</h1>
+      <a href="{{url_for('showCategories')}}" class='headerName'>
+        <h1>Catalog App</h1>
       </a>
       <button type='button' onclick="location.href='{{url_for('showLogin')}}';"
-        id='loginButton'>
-        <a href='{{url_for('showLogin')}}' class='loginLink'>Login</a>
+        id='loginButton'>Login
       </button>
     </header>
     <section class='mainSection1'>
@@ -20,16 +23,16 @@
           <h3 title='No Categories Listed'>No Categories Listed</h3>
         {% else %}
           {% for c in categories %}
-            <div class='categoryName'>
-              <a href='{{url_for('showCategory',
-                current_category = c.name,)}}' class='categoryLink'>
-                <span class='name'><p>{{c.name}}</p></span>
+            <div class='categoryNameSection'>
+              <a href="{{url_for('showCategory',
+                current_category = c.name,)}}" class='categoryLink'>
+                <p class='categoryName'>{{c.name}}</p>
               </a>
             </div>
           {% endfor %}
         {% endif %}
       </div>
-      <div class='addItemAndRecentItems'>
+      <div class='recentItems'>
         <div class=recentItemsList>
           <h2 id='recentItemsTitle'>Recent Items</h2>
           {% if items == [] %}
@@ -37,15 +40,26 @@
           {% else %}
             {% for i in items %}
               <div class='itemNameCategory'>
-                <a href='{{url_for('showItem', current_category = i.1,
-                  current_item = i.0)}}' class='itemLink'>
-                  <span class='name'><p>{{i.0}}</p></span>
-                  <span class='categoryLinkRecentItems'><p> ({{i.1}})</p></span>
+                <a href="{{url_for('showItem', current_category = i.1,
+                  current_item = i.0)}}" class='itemLink'>
+                  <p class='itemName'>{{i.0}}</p>
+                  <p class='categoryLinkRecentItems'> ({{i.1}})</p>
                 </a>
               </div>
             {% endfor %}
           {% endif %}
-        <div>
+        </div>
+      </div>
+      <div class = 'flash'>
+        {% with messages = get_flashed_messages() %}
+          {% if messages %}
+            <ul class='flashMessage'>
+              {% for message in messages %}
+              <li><strong>{{message}}</strong></li>
+              {% endfor %}
+            </ul>
+          {% endif %}
+        {% endwith %}
       </div>
     </section>
   </body>

@@ -1,39 +1,46 @@
+<!DOCTYPE html>
 <html>
   <head>
     <title>Edit Item</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel='stylesheet' type='text/css' href='/static/styles.css'>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js">
+    </script>
   </head>
   <body>
     <header class='applicationHeader'>
-      <a href='{{url_for('showCategories')}}' class='headerName'>
-        <h1>Catalog Application</h1>
+      <a href="{{url_for('showCategories')}}" class='headerName'>
+        <h1>Catalog App</h1>
       </a>
       <button type='button' onclick="location.href='{{url_for('disconnect')}}';"
-        id='logoutButton'>
-        <a href='{{url_for('disconnect')}}' class='logoutLink'>Logout</a>
+        id='logoutButton'>Logout
       </button>
     </header>
     <section class='mainSection2'>
       <div class='editItem'>
         <h2>Edit Item</h2>
-        <form action='{{url_for('editItem', current_item=item.name)}}'
-          method='post'>
+        <form action="{{url_for('editItem', current_item=item.name)}}"
+          method='post' class='editItemForm'>
           <p>Name:</p>
           <input type='text' maxlength="100" name='name'
             value='{{item.name}}'>
           <p>Description:</p>
-          <textarea type='text' maxlength="250" rows='5' cols='40'
+          <textarea maxlength="250" rows='5' cols='38'
             name='description'>{{item.description}}</textarea>
           <p>Category</p>
-          <select name='categorySelection'>
-            {% for c in categories %}
-              <option value='{{c.id}}'
-            {% if category.name == c.name %}selected{% endif %}>{{c.name}}
-            </option>
+          <select name='categorySelection' id='categorySelections'>
+          {% for c in categories %}
+            <option value='{{c.id}}'>{{c.name}}</option>
           {% endfor %}
-          <input type='submit' value='Update'>
-          <a href='{{url_for('showItem', current_category = category.name,
-            current_item = item.name)}}'>Cancel</a>
+          </select>
+          <script>
+            $('#categorySelections option[value="{{category.id}}"]').prop("selected", true);
+          </script>
+          <div class='updateCancelButtons'>
+            <input type='submit' value='Update' id='editItemSubmitButton'>
+            <a href="{{url_for('showItem', current_category = category.name,
+              current_item = item.name)}}" class='cancelButton'>Cancel</a>
+          </div>
         </form>
       </div>
     </section>

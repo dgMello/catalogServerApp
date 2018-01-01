@@ -1,27 +1,28 @@
+<!DOCTYPE html>
 <html>
   <head>
     <title>Delete Item</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel='stylesheet' type='text/css' href='/static/styles.css'>
   </head>
   <body>
     <header class='applicationHeader'>
-      <a href='{{url_for('showCategories')}}' class='headerName'>
-        <h1>Catalog Application</h1>
+      <a href="{{url_for('showCategories')}}" class='headerName'>
+        <h1>Catalog App</h1>
       </a>
       <button type='button' onclick="location.href='{{url_for('disconnect')}}';"
-        id='logoutButton'>
-        <a href='{{url_for('disconnect')}}' class='logoutLink'>Logout</a>
+        id='logoutButton'>Logout
       </button>
     </header>
     <section class='mainSection2'>
       <div class='deleteItem'>
         <h2>Delete Item</h2>
-        <form action='{{url_for('deleteItem', current_item=item.name)}}'
+        <form action="{{url_for('deleteItem', current_item=item.name)}}"
           method='post'>
           <p>Are you sure you want to delete {{item.name}}</p>
           <input type='submit' value='Delete'>
-          <a href='{{url_for('showItem', current_category = category.name,
-            current_item = item.name)}}'>Cancel</a>
+          <a href="{{url_for('showItem', current_category = category.name,
+            current_item = item.name)}}">Cancel</a>
         </form>
       </div>
     </section>

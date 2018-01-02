@@ -7,68 +7,120 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js">
     </script>
   </head>
-  <body>
-    <header class='applicationHeader'>
-      <a href='{{url_for("showCategories")}}' class='headerName'>
-        <h1>Catalog App</h1>
-      </a>
-      <button type='button' onclick="location.href='{{url_for('disconnect')}}';"
-        id='logoutButton'>Logout
-      </button>
-    </header>
-    <div class = 'flash'>
-      {% with messages = get_flashed_messages() %}
-        {% if messages %}
-          <ul class='flashMessage'>
-            {% for message in messages %}
-            <li><strong>{{message}}</strong></li>
-            {% endfor %}
-          </ul>
-        {% endif %}
-      {% endwith %}
-    </div>
-    <section class='mainSection1'>
-      <div class='categoryList'>
-        <h2 id='categoryListTitle'>Categories</h2>
-        {% if categories == [] %}
-          <h3>No Categories Listed</h3>
-        {% else %}
-          {% for c in categories %}
-            <div class='categoryNameSection'>
-              <a href='{{url_for("showCategory",
-                current_category = c.name,)}}' class='categoryLink'>
-                <p class='categoryName'>{{c.name}}</p>
-              </a>
-            </div>
-          {% endfor %}
-        {% endif %}
+  {% if is_logged_in %}
+    <body>
+      <header class='applicationHeader'>
+        <a href='{{url_for("showCategories")}}' class='headerName'>
+          <h1>Catalog App</h1>
+        </a>
+        <button type='button' onclick="location.href='{{url_for('disconnect')}}';"
+          id='logoutButton'>Logout
+        </button>
+      </header>
+      <div class = 'flash'>
+        {% with messages = get_flashed_messages() %}
+          {% if messages %}
+            <ul class='flashMessage'>
+              {% for message in messages %}
+              <li><strong>{{message}}</strong></li>
+              {% endfor %}
+            </ul>
+          {% endif %}
+        {% endwith %}
       </div>
-      <div class='addItemAndRecentItems'>
-        <a href='{{url_for("newItem")}}' id='addItemButton'>Add Item</a>
-        <div class='recentItemsList'>
-          <h2 id='recentItemsTitle'>Recent Items</h2>
-          {% if items == [] %}
-            <h3>No Items</h3>
+      <section class='mainSection1'>
+        <div class='categoryList'>
+          <h2 id='categoryListTitle'>Categories</h2>
+          {% if categories == [] %}
+            <h3>No Categories Listed</h3>
           {% else %}
-            {% for i in items %}
-              <div class='itemNameCategory'>
-                <a href='{{url_for("showItem", current_category = i.1,
-                  current_item = i.0)}}' class='itemLink'>
-                  <p class='itemName'>{{i.0}}</p>
-                  <p class='categoryLinkRecentItems'> ({{i.1}})</p>
+            {% for c in categories %}
+              <div class='categoryNameSection'>
+                <a href='{{url_for("showCategory",
+                  current_category = c.name,)}}' class='categoryLink'>
+                  <p class='categoryName'>{{c.name}}</p>
                 </a>
               </div>
             {% endfor %}
           {% endif %}
         </div>
+        <div class='addItemAndRecentItems'>
+          <a href='{{url_for("newItem")}}' id='addItemButton'>Add Item</a>
+          <div class='recentItemsList'>
+            <h2 id='recentItemsTitle'>Recent Items</h2>
+            {% if items == [] %}
+              <h3>No Items</h3>
+            {% else %}
+              {% for i in items %}
+                <div class='itemNameCategory'>
+                  <a href='{{url_for("showItem", current_category = i.1,
+                    current_item = i.0)}}' class='itemLink'>
+                    <p class='itemName'>{{i.0}}</p>
+                    <p class='categoryLinkRecentItems'> ({{i.1}})</p>
+                  </a>
+                </div>
+              {% endfor %}
+            {% endif %}
+          </div>
+        </div>
+      </section>
+    </body>
+  {% else %}
+    <body>
+      <header class='applicationHeader'>
+        <a href="{{url_for('showCategories')}}" class='headerName'>
+          <h1>Catalog App</h1>
+        </a>
+        <button type='button' onclick="location.href='{{url_for('showLogin')}}';"
+          id='loginButton'>Login
+        </button>
+      </header>
+      <div class = 'flash'>
+        {% with messages = get_flashed_messages() %}
+          {% if messages %}
+            <ul class='flashMessage'>
+              {% for message in messages %}
+              <li><strong>{{message}}</strong></li>
+              {% endfor %}
+            </ul>
+          {% endif %}
+        {% endwith %}
       </div>
-    </section>
-    <script>
-      function hideAddButton(currentUser) {
-        if currentUser == None {
-          document.getElementById("addItemButton").style.display = "none";
-        }
-      }
-    </script>
-  </body>
+      <section class='mainSection1'>
+        <div class='categoryList'>
+          <h2 id='categoryListTitle'>Categories</h2>
+          {% if categories == [] %}
+            <h3 title='No Categories Listed'>No Categories Listed</h3>
+          {% else %}
+            {% for c in categories %}
+              <div class='categoryNameSection'>
+                <a href="{{url_for('showCategory',
+                  current_category = c.name,)}}" class='categoryLink'>
+                  <p class='categoryName'>{{c.name}}</p>
+                </a>
+              </div>
+            {% endfor %}
+          {% endif %}
+        </div>
+        <div class='recentItems'>
+          <div class=recentItemsList>
+            <h2 id='recentItemsTitle'>Recent Items</h2>
+            {% if items == [] %}
+              <h3>No Items</h3>
+            {% else %}
+              {% for i in items %}
+                <div class='itemNameCategory'>
+                  <a href="{{url_for('showItem', current_category = i.1,
+                    current_item = i.0)}}" class='itemLink'>
+                    <p class='itemName'>{{i.0}}</p>
+                    <p class='categoryLinkRecentItems'> ({{i.1}})</p>
+                  </a>
+                </div>
+              {% endfor %}
+            {% endif %}
+          </div>
+        </div>
+      </section>
+    </body>
+  {% endif %}
 </html>

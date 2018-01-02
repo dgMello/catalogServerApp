@@ -5,49 +5,97 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel='stylesheet' type='text/css' href='/static/styles.css'>
   </head>
-  <body>
-    <header class='applicationHeader'>
-      <a href="{{url_for('showCategories')}}" class='headerName'>
-        <h1>Catalog App</h1>
-      </a>
-      <button type='button' onclick="location.href='{{url_for('disconnect')}}';"
-        id='logoutButton'>Logout
-      </button>
-    </header>
-    <section class='mainSection1'>
-      <div class='categoryList'>
-        <h2 id='categoryListTitle'>Categories</h2>
-        {% if categories == [] %}
-          <h3>No Categories Listed</h3>
-        {% else %}
-          {% for c in categories %}
-            <div class='categoryNameSection' id='{{c.name}}'>
-              <a href="{{url_for('showCategory',
-                current_category = c.name,)}}" class='categoryLink'>
-                <p class='categoryName'>{{c.name}}</p>
-              </a>
-            </div>
-          {% endfor %}
-        {% endif %}
-        <script>
-          document.getElementById('{{category}}').style.fontWeight = 'bold'
-        </script>
-      </div>
-      <div class='itemsList'>
-        <h2 id='itemTitle'>{{category}} Items</h2>
-        {% if items == [] %}
-          <h3>No Items</h3>
-        {% else %}
-          {% for i in items %}
-            <div class='itemNameSection'>
-              <a href="{{url_for('showItem', current_category = category,
-                current_item = i.name)}}" class='itemLink'>
-                <p class='itemName'>{{i.name}}</p>
-              </a>
-            </div>
-          {% endfor %}
-        {% endif %}
-      </div>
-    </section>
-  </body>
+  {% if is_logged_in %}
+    <body>
+      <header class='applicationHeader'>
+        <a href="{{url_for('showCategories')}}" class='headerName'>
+          <h1>Catalog App</h1>
+        </a>
+        <button type='button' onclick="location.href='{{url_for('disconnect')}}';"
+          id='logoutButton'>Logout
+        </button>
+      </header>
+      <section class='mainSection1'>
+        <div class='categoryList'>
+          <h2 id='categoryListTitle'>Categories</h2>
+          {% if categories == [] %}
+            <h3>No Categories Listed</h3>
+          {% else %}
+            {% for c in categories %}
+              <div class='categoryNameSection' id='{{c.name}}'>
+                <a href="{{url_for('showCategory',
+                  current_category = c.name,)}}" class='categoryLink'>
+                  <p class='categoryName'>{{c.name}}</p>
+                </a>
+              </div>
+            {% endfor %}
+          {% endif %}
+          <script>
+            document.getElementById('{{category}}').style.fontWeight = 'bold'
+            </script>
+          </div>
+          <div class='itemsList'>
+            <h2 id='itemTitle'>{{category}} Items</h2>
+            {% if items == [] %}
+              <h3>No Items</h3>
+            {% else %}
+              {% for i in items %}
+              <div class='itemNameSection'>
+                <a href="{{url_for('showItem', current_category = category,
+                  current_item = i.name)}}" class='itemLink'>
+                  <p class='itemName'>{{i.name}}</p>
+                </a>
+              </div>
+            {% endfor %}
+          {% endif %}
+        </div>
+      </section>
+    </body>
+  {% else %}
+    <body>
+      <header class='applicationHeader'>
+        <a href="{{url_for('showCategories')}}" class='headerName'>
+          <h1>Catalog App</h1>
+        </a>
+        <button type='button' onclick="location.href='{{url_for('showLogin')}}';"
+          id='loginButton'>Login
+        </button>
+      </header>
+      <section class='mainSection1'>
+        <div class='categoryList'>
+          <h2 id='categoryListTitle'>Categories</h2>
+          {% if categories == [] %}
+            <h3>No Categories Listed</h3>
+          {% else %}
+            {% for c in categories %}
+              <div class='categoryNameSection' id='{{c.name}}'>
+                <a href="{{url_for('showCategory',
+                  current_category = c.name,)}}" class='categoryLink'>
+                  <p class='categoryName'>{{c.name}}</p>
+                </a>
+              </div>
+            {% endfor %}
+          {% endif %}
+          <script>
+            document.getElementById('{{category}}').style.fontWeight = 'bold'
+          </script>
+        </div>
+        <div class=itemsList>
+          <h2 id='itemTitle'>{{category}} Items</h2>
+          {% if items == [] %}
+            <h3>No Items</h3>
+          {% else %}
+            {% for i in items %}
+              <div class='itemNameSection'>
+                <a href="{{url_for('showItem', current_category = category,
+                  current_item = i.name)}}" class='itemLink'>
+                  <p class='itemName'>{{i.name}}</p>
+                </a>
+              </div>
+            {% endfor %}
+          {% endif %}
+        </div>
+      </section>
+    </body>
+  {% endif %}
 </html>

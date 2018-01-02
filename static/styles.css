@@ -191,7 +191,7 @@ a.cancelButton:link, a.cancelButton:visited {
   padding-right: 2%;
 }
 /* Update the login/logout button. */
-#loginButton, #logoutButton {
+#logoutButton, #loginButton {
   color: white;
   width: 70px;
   height: 27px;
@@ -203,7 +203,7 @@ a.cancelButton:link, a.cancelButton:visited {
   cursor: pointer;
 }
 /* Make the logout/login button change color when cursor is over it. */
-#loginButton:hover, #logoutButton:hover {
+#logoutButton:hover, #loginButton:hover {
   background-color: #e65c00;
 }
 /* Set breakpoint for 870px */
@@ -245,7 +245,7 @@ a.cancelButton:link, a.cancelButton:visited {
   .categoryList {
     width: 15%;
   }
-  #loginButton, #logoutButton {
+  #logoutButton, #loginButton {
     margin-right: 15%;
   }
 }

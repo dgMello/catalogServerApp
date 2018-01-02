@@ -5,37 +5,56 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel='stylesheet' type='text/css' href='/static/styles.css'>
   </head>
-  <body>
-    <header class='applicationHeader'>
-      <a href="{{url_for('showCategories')}}" class='headerName'>
-        <h1>Catalog App</h1>
-      </a>
-      <button type='button' onclick="location.href='{{url_for('disconnect')}}';"
-        id='logoutButton'>Logout
-      </button>
-    </header>
-    <div class='flash'>
-      {% with messages = get_flashed_messages() %}
-        {% if messages %}
-          <ul class='flashMessage'>
-          {% for message in messages %}
-            <li><strong>{{ message }}</strong></li>
-          {% endfor %}
-          </ul>
-        {% endif %}
-      {% endwith %}
-    </div>
-    <section class='mainSection2'>
-      <div class="nameAndDescription">
-        <h2>{{item.name}}</h2>
-        <p>{{item.description}}</p>
+  {% if is_logged_in %}
+    <body>
+      <header class='applicationHeader'>
+        <a href="{{url_for('showCategories')}}" class='headerName'>
+          <h1>Catalog App</h1>
+        </a>
+        <button type='button' onclick="location.href='{{url_for('disconnect')}}';"
+          id='logoutButton'>Logout
+        </button>
+      </header>
+      <div class='flash'>
+        {% with messages = get_flashed_messages() %}
+          {% if messages %}
+            <ul class='flashMessage'>
+            {% for message in messages %}
+              <li><strong>{{ message }}</strong></li>
+            {% endfor %}
+            </ul>
+          {% endif %}
+        {% endwith %}
       </div>
-      <div class="editAndDeleteButton">
-        <a href="{{url_for('editItem', current_item = item.name)}}"
-          id='editButton'>Edit</a>
-        <a href="{{url_for('deleteItem', current_item = item.name)}}"
-          id='deleteButton'>Delete</a>
-      </div>
-    </section>
-  </body>
+      <section class='mainSection2'>
+        <div class="nameAndDescription">
+          <h2>{{item.name}}</h2>
+          <p>{{item.description}}</p>
+        </div>
+        <div class="editAndDeleteButton">
+          <a href="{{url_for('editItem', current_item = item.name)}}"
+            id='editButton'>Edit</a>
+          <a href="{{url_for('deleteItem', current_item = item.name)}}"
+            id='deleteButton'>Delete</a>
+        </div>
+      </section>
+    </body>
+  {% else %}
+    <body>
+      <header class='applicationHeader'>
+        <a href="{{url_for('showCategories')}}" class='headerName'>
+          <h1>Catalog App</h1>
+        </a>
+        <button type='button' onclick="location.href='{{url_for('showLogin')}}';"
+          id='loginButton'>Login
+        </button>
+      </header>
+      <section class='mainSection2'>
+        <div class="nameAndDescription">
+          <h2>{{item.name}}</h2>
+          <p>{{item.description}}</p>
+        </div>
+      </section>
+    </body>
+  {% endif %}
 </html>

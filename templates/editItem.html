@@ -4,17 +4,6 @@
     <title>Edit Item</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel='stylesheet' type='text/css' href='/static/styles.css'>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js">
-    </script>
-    <script>
-      function checkUserID(currentUserId, itemUserID) {
-        if (currentUserId != itemUserID) {
-          window.alert('You are not authorized to delete this item. Create your own items please.');
-          document.getElementsByTagName("body")[0].style.display = "none";
-          location.href="{{url_for('showItem', current_category=category.name, current_item=item.name)}}";
-        }
-      }
-    </script>
   </head>
   <body onload='checkUserID({{userId}}, {{item.user_id}})'>
     <header class='applicationHeader'>

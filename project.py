@@ -1,4 +1,5 @@
-from flask import Flask, render_template, request, redirect, url_for, flash, jsonify
+from flask import Flask, render_template, request, redirect, url_for, flash, jsonify, abort
+from functools import wraps
 from sqlalchemy import create_engine, func, desc
 from sqlalchemy.orm import sessionmaker
 from database_setup import Base, User, Category, Item
@@ -38,6 +39,9 @@ def showLogin():
 # This method enables login through Facebook.
 @app.route('/fbconnect', methods=['POST'])
 def fbconnect():
+    """
+    Gathers data from Facebook API and places it inside a session variable.
+    """
     if request.args.get('state') != login_session['state']:
         response = make_response(json.dumps('Invalid state parameter.'), 401)
         response.headers['Content-Type'] = 'application/json'
@@ -85,13 +89,16 @@ def fbconnect():
     output += '<img src="'
     output += ''' " style = "width: 300px: height: 300px; border-radius:150px;
         -webkit-border-radius: 150px; -moz-border-radius: 150px;">'''
-    flash("you are now logged in as %s" % login_session['username'])
+    flash("You are now logged in as %s" % login_session['username'])
     return output
 
 
 # Method for disconnecting from fabebook
 @app.route('/fbdisconnect')
 def fbdisconnect():
+    """
+    Logout Facebook user.
+    """
     facebook_id = login_session['facebook_id']
     access_token = login_session['access_token']
     url = 'https://graph.facebook.com/%s/permissions' % facebook_id
@@ -103,11 +110,17 @@ def fbdisconnect():
 @app.route('/gconnect', methods=['POST'])
 def gconnect():
     # Validate state token
+    """
+    Check the state token produced at login.
+    """
     if request.args.get('state') != login_session['state']:
         response = make_response(json.dumps('Invalid state parmeter.'), 401)
         response.headers['Content-Type'] = 'application/json'
         return response
     code = request.data
+    """
+    Turn the state token into a credential object.
+    """
     try:
         # Upgrade the authorization code into a credentials object
         oauth_flow = flow_from_clientsecrets('client_secrets.json', scope='')
@@ -119,6 +132,9 @@ def gconnect():
         response.headers['Content-Type'] = 'application/json'
         return response
     # Check that the access token is valid
+    """
+    Checks the credentials token is valid using the Google API
+    """
     access_token = credentials.access_token
     url = ('https://www.googleapis.com/oauth2/v1/tokeninfo?access_token=%s'
         % access_token)
@@ -129,7 +145,10 @@ def gconnect():
         response = make_response(json.dumps(result.get('error')), 500)
         response.headers['Content-Type'] = 'application/json'
         return response
-    # Verify that the acces token is used for the intended user.
+    # Verify that the access token is used for the intended user.
+    """
+    Check that access token for current user.  If not, return 401 error.
+    """
     gplus_id = credentials.id_token['sub']
     if result['user_id'] != gplus_id:
         response = make_response(json.dumps("""Token's user ID doesn't match
@@ -137,6 +156,9 @@ def gconnect():
         response.headers['Content-Type'] = 'application/json'
         return response
     # Check to see if user is already logged in
+    """
+    Check to see if user is logged in already.  If yes, return 200 error.
+    """
     stored_access_token = login_session.get('access_token')
     stored_gplus_id = login_session.get('gplus_id')
     if stored_access_token is not None and gplus_id == stored_gplus_id:
@@ -145,24 +167,38 @@ def gconnect():
         response.headers['Content-Type'] = 'application/json'
         return response
     # Store the access token in the session for later use.
+    """
+    Storing token for later use.
+    """
     login_session['provider'] = 'google'
     login_session['access_token'] = credentials.access_token
     login_session['gplus_id'] = gplus_id
     # Get user info
+    """
+    Get user info from Google account using Google APi.
+    """
     userinfo_url = "https://www.googleapis.com/oauth2/v2/userinfo"
     params = {'access_token': credentials.access_token, 'alt':'json'}
     answer = requests.get(userinfo_url, params=params)
     data = answer.json()
 
+    """
+    Assign User info to login session.
+    """
     login_session['username'] = data['name']
     login_session['picture'] = data['picture']
     login_session['email'] = data['email']
-
+    """
+    Check to see if useris new.  If not, create new user.
+    """
     user_id = getUserID(login_session['email'])
     if not user_id:
         user_id = createUser(login_session)
     login_session['user_id'] = user_id
 
+    """
+    Display welcome screen.
+    """
     output = ''
     output += '<h1>Welcome, '
     output += login_session['username']
@@ -171,12 +207,15 @@ def gconnect():
     output += '<img src="'
     output += ''' " style = "width: 300px: height: 300px; border-radius:150px;
         -webkit-border-radius: 150px; -moz-border-radius: 150px;">'''
-    flash("you are now logged in as %s" % login_session['username'])
+    flash("You are now logged in as %s" % login_session['username'])
     return output
 
 # This method enables the user to disconect from Google or Facebook.
 @app.route('/disconnect')
 def disconnect():
+    """
+    Logout Facebook user.
+    """
     if 'provider' in login_session:
         if login_session['provider'] == 'google':
             gdisconnect()
@@ -216,6 +255,19 @@ def getUserID(email):
     except:
         return None
 
+# Method for creating a wrapper to require a login.
+def login_required(func):
+    """
+    Wrapper to check if the user is logged in.
+    """
+    @wraps(func)
+    def wrapper():
+        if 'username' not in login_session:
+            return redirect('login')
+        else:
+            return func()
+    return wrapper
+
 # Method for disconnecting from google sign in.
 @app.route('/gdisconnect')
 def gdisconnect():
@@ -243,32 +295,31 @@ def gdisconnect():
         response.headers['Content-Type'] = 'application/json'
         return response
 
-# 9. Method to get JSON APIs of all categories
+# Method to get JSON APIs of all categories
 @app.route('/catalog.json')
 def catalogsJSON():
     categories = session.query(Category).all()
     return jsonify(categories=[c.serialize for c in categories],
         items=[i.serialize for i in items])
 
-# 10. Method to get JSON APIs of the items in a certain category.
+# Method to get JSON APIs of the items in a certain category.
 @app.route('/catalog/<current_category>.json')
 def categoryJSON(current_category):
     category = session.query(Category).filter_by(name=current_category).one()
     items = session.query(Item).filter_by(category_id=category.id).all()
     return jsonify(Items=[i.serialize for i in items])
 
-# 11. Method to get JSON APIs of a certain item.
+# Method to get JSON APIs of a certain item.
 @app.route('/catalog/<current_category>/<current_item>.json')
 def itemJSON(current_category, current_item):
     item = session.query(Item).filter_by(name=current_item).one()
     return jsonify(item=item.serialize)
 
-# 12.  Method to show all categorires & latest items added.
+# Method to show all categorires & latest items added.
 @app.route('/')
 @app.route('/catalog/')
 def showCategories():
     categories = session.query(Category).order_by(Category.name)
-    users = session.query(User).order_by(User.name).all()
     itemCount = session.query(func.count(Item.id))
     recentItems = session.query(Item.name, Category.name).\
         join(Item.category).order_by(Item.id.desc()).limit(5)
@@ -277,14 +328,16 @@ def showCategories():
             items=recentItems)
     else:
         return render_template('categories.html', categories=categories,
-            items=recentItems)
+            items=recentItems, currentUser=login_session['username'])
 
-# 13. Method to show all items in a category
+# Method to show all items in a category
 @app.route('/catalog/<current_category>/items')
 def showCategory(current_category):
     categories = session.query(Category).order_by(Category.name)
     currentCategory = session.query(Category).filter_by\
-        (name = current_category.title()).one()
+        (name = current_category.title()).one_or_none()
+    if currentCategory == None:
+        return abort(404)
     items = session.query(Item).filter_by(category_id=currentCategory.id)
     if 'username' not in login_session:
         return render_template('publicCategory.html', items=items,
@@ -294,13 +347,11 @@ def showCategory(current_category):
             category=currentCategory.name, categories=categories)
 
 
-# 14. Method to create a new item.
+# Method to create a new item.
 @app.route('/catalog/item/new', methods=['GET', 'POST'])
+@login_required
 def newItem():
     categories = session.query(Category).order_by(Category.name)
-    if 'username' not in login_session:
-        return redirect('/login')
-    # Indent this section after finishing the above section.
     if request.method == 'POST':
         categoryID = request.form['categorySelection']
         newItem = Item(name=request.form['name'],
@@ -315,26 +366,30 @@ def newItem():
         return render_template('addItem.html',
             categories=categories)
 
-# 15. Method to show description & name of a certain itme.
+# Method to show description & name of a certain itme.
 @app.route('/catalog/<current_category>/<current_item>')
 def showItem(current_category, current_item):
     category = session.query(Category).filter_by\
         (name = current_category.title()).one()
-    item = session.query(Item).filter_by(name=current_item).one()
+    item = session.query(Item).filter_by(name=current_item).one_or_none()
+    print item
+    if item == None:
+        return abort(404)
     if 'username' not in login_session:
         return render_template('publicItem.html', item=item)
     else:
         return render_template('item.html', item=item)
 
-# 16. Method to edit an item name, description & category.
+# Method to edit an item name, description & category.
 @app.route('/catalog/<current_item>/edit', methods=['GET', 'POST'])
 def editItem(current_item):
-    if 'username' not in login_session:
-        return redirect('/login')
-    editedItem = session.query(Item).filter_by(name=current_item).one()
+    editedItem = session.query(Item).filter_by(name=current_item).one_or_none()
+    if editedItem == None:
+        return abort(404)
     category = session.query(Category).filter_by\
         (id=editedItem.category_id).one()
     categories = session.query(Category).order_by(Category.name)
+    currentUserID = login_session['user_id']
     if request.method == 'POST':
         if request.form['name']:
             editedItem.name = request.form['name']
@@ -349,17 +404,19 @@ def editItem(current_item):
             current_item=editedItem.name))
     else:
         return render_template('editItem.html', item=editedItem,
-            category=category, categories=categories)
+            category=category, categories=categories, userId=currentUserID)
 
-# 17. Method to delete an item.
+# Method to delete an item.
 @app.route('/catalog/<current_item>/delete', methods=['GET', 'POST'])
 def deleteItem(current_item):
-    if 'username' not in login_session:
-        return redirect('/login')
-    itemToDelete = session.query(Item).filter_by(name=current_item).one()
+    itemToDelete = session.query(Item).filter_by(name=current_item)\
+        .one_or_none()
+    if itemToDelete == None:
+        return abort(404)
     category = session.query(Category).filter_by\
         (id=itemToDelete.category_id).one()
     categories = session.query(Category).order_by(Category.name)
+    currentUserID = login_session['user_id']
     if request.method == 'POST':
         session.delete(itemToDelete)
         session.commit()
@@ -367,7 +424,7 @@ def deleteItem(current_item):
         return redirect(url_for('showCategories'))
     else:
         return render_template('deleteItem.html', item=itemToDelete,
-            category=category, categories=categories)
+            category=category, categories=categories, userId=currentUserID)
 
 if __name__ == '__main__':
     app.debug = True

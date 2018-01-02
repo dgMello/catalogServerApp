@@ -4,6 +4,8 @@
     <title>Item Catalog</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel='stylesheet' type='text/css' href='/static/styles.css'>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js">
+    </script>
   </head>
   <body>
     <header class='applicationHeader'>
@@ -61,5 +63,12 @@
         </div>
       </div>
     </section>
+    <script>
+      function hideAddButton(currentUser) {
+        if currentUser == None {
+          document.getElementById("addItemButton").style.display = "none";
+        }
+      }
+    </script>
   </body>
 </html>

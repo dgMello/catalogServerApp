@@ -4,8 +4,19 @@
     <title>Delete Item</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel='stylesheet' type='text/css' href='/static/styles.css'>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js">
+    </script>
+    <script>
+      function checkUserID(currentUserId, itemUserID) {
+        if (currentUserId != itemUserID) {
+          window.alert('You are not authorized to delete this item. Create your own items please.');
+          document.getElementsByTagName("body")[0].style.display = "none";
+          location.href="{{url_for('showItem', current_category=category.name, current_item=item.name)}}";
+        }
+      }
+    </script>
   </head>
-  <body>
+  <body onload='checkUserID({{userId}}, {{item.user_id}})'>
     <header class='applicationHeader'>
       <a href="{{url_for('showCategories')}}" class='headerName'>
         <h1>Catalog App</h1>
@@ -19,10 +30,10 @@
         <h2>Delete Item</h2>
         <form action="{{url_for('deleteItem', current_item=item.name)}}"
           method='post'>
-          <p>Are you sure you want to delete {{item.name}}</p>
-          <input type='submit' value='Delete'>
+          <p>Are you sure you want to delete {{item.name}}?</p>
+          <input type='submit' value='Delete' id='deleteSubmitButton'>
           <a href="{{url_for('showItem', current_category = category.name,
-            current_item = item.name)}}">Cancel</a>
+            current_item = item.name)}}" class='cancelButton'>Cancel</a>
         </form>
       </div>
     </section>

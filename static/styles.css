@@ -149,7 +149,7 @@ a.cancelButton:link, a.cancelButton:visited {
   width: 40%
 }
 /* Update the add and edit item form with bold font. */
-.addItemForm, .editItemForm {
+.addItemForm, .editItemForm, .cancelButton {
   font-weight: bold;
 }
 /* Style the flash div. */
@@ -168,7 +168,7 @@ a.cancelButton:link, a.cancelButton:visited {
   color: red;
 }
 /* Update the Submit buttons' margin. */
-#addItemSubmitButton, #editItemSubmitButton {
+#addItemSubmitButton, #editItemSubmitButton, #deleteSubmitButton {
   margin: 2%;
   margin-left: 2px;
 }

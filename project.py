@@ -353,7 +353,7 @@ def showCategories():
     """
     Render the categories template to show all categore and 5 recent items.
     """
-    categories = session.query(Category).order_by(Category.name)
+    categories = session.query(Category).order_by(Category.name).all()
     itemCount = session.query(func.count(Item.id))
     recentItems = session.query(Item.name, Category.name).\
         join(Item.category).order_by(Item.id.desc()).limit(5)

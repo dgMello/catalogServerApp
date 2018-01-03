@@ -276,11 +276,27 @@ def checkUser(func):
         category = session.query(Category.name).filter_by\
             (id=currentItem.category_id).one()
         if login_session['user_id'] != currentItem.user_id:
-            return """<script>  function myFunction() {alert('You are not authorized to made changes to this item. Please create your own items.');
+            return """<script>  function myFunction() {alert('You are not\
+                authorized to made changes to this item. Please create your\
+                own items.');
                 location.href="http://localhost:8000/catalog/"
                 }</script><body onload='myFunction()'>"""
         else:
             return func(currentItem.name)
+    return wrapper
+
+def authenticateUser(func):
+    """
+    Wrapper to check if the user is logged in.
+    """
+    @wraps(func)
+    def wrapper():
+        user = session.query(User.name).filter_by(name=login_session\
+            ['username']).one_or_none()
+        if user == None:
+            return user
+        else:
+            return func()
     return wrapper
 
 # Method for disconnecting from google sign in.
@@ -463,6 +479,7 @@ def editItem(current_item):
 # Method to delete an item.
 @app.route('/catalog/<current_item>/delete', methods=['GET', 'POST'])
 @checkUser
+@authenticateUser
 def deleteItem(current_item):
     """
     Render the deleteitem template to allow a user to delete an item.

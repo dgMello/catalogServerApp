@@ -448,6 +448,7 @@ def showItem(current_category, current_item):
 
 # Method to edit an item name, description & category.
 @app.route('/catalog/<current_item>/edit', methods=['GET', 'POST'])
+@authenticateUser
 @checkUser
 def editItem(current_item):
     """

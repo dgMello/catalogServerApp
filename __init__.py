@@ -55,7 +55,6 @@ def fbconnect():
         response.headers['Content-Type'] = 'application/json'
         return response
     access_token = request.data
-    print "access token received %s " % access_token
     # Exchange client token for long-lived server side token.
     app_id = json.loads(open('/var/www/python/catalogApp/catalog/fb_client_secrets.json', 'r').read())['web'][
         'app_id']
@@ -297,7 +296,6 @@ def authenticateUser(func):
     def wrapper(current_item):
         user = session.query(User.name).filter_by(name=login_session\
             ['username']).one_or_none()
-        print user
         if user == None:
             return """<body onload='Authentication Failure.'>"""
         else:
@@ -313,7 +311,6 @@ def gdisconnect():
         """
     # Only disconnect a connected user by checking the access token.
     access_token = login_session.get('access_token')
-    print access_token
     if access_token is None:
         response = make_response(json.dumps('Current user not connected.'), 401)
         response.headers['Content-Type'] = 'application/json'

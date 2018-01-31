@@ -170,7 +170,6 @@ def gconnect():
     data = answer.json()
     # Assign User info to login session.
     login_session['username'] = data['name']
-    login_session['picture'] = data['picture']
     login_session['email'] = data['email']
     # Check to see if useris new.  If not, create new user.
     user_id = getUserID(login_session['email'])
@@ -223,7 +222,7 @@ def createUser(login_session):
     """
     # Assign data from login session to variable
     newUser = User(name=login_session['username'], email=login_session[
-        'email'], picture=login_session['picture'])
+        'email'])
     # Add new user to session and commit it.
     session.add(newUser)
     session.commit()

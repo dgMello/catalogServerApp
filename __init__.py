@@ -55,6 +55,7 @@ def fbconnect():
         response.headers['Content-Type'] = 'application/json'
         return response
     access_token = request.data
+    print access_token
     # Exchange client token for long-lived server side token.
     app_id = json.loads(open('/var/www/python/catalogApp/catalog/fb_client_secrets.json', 'r').read())['web'][
         'app_id']
@@ -200,6 +201,7 @@ def disconnect():
         if login_session['provider'] == 'google':
             gdisconnect()
             del login_session['gplus_id']
+            del login_session['access_token']
         if login_session['provider'] == 'facebook':
             fbdisconnect()
             del login_session['facebook_id']
@@ -281,7 +283,7 @@ def checkUser(func):
             return """<script>  function myFunction() {
                 alert('You are not authorized to made changes to this item.\
                 Please create your own items.');
-                location.href="http://localhost:8000/catalog/"
+                location.href="http://52.15.210.193/catalog/"
                 }</script><body onload='myFunction()'>"""
         else:
             return func(currentItem.name)

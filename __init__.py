@@ -79,6 +79,7 @@ def fbconnect():
     login_session['username'] = data['name']
     login_session['email'] = data['email']
     login_session['facebook_id'] = data['id']
+    login_session['access_token'] = token
     # Check to see if this a new user. If not create a user profile
     user_id = getUserID(login_session['email'])
     if not user_id:

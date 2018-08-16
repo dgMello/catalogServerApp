@@ -1,6 +1,6 @@
 Catalog Application
 Description
-This python progam creates a web application called Catalog Applicatoin.  This application contains a database of categories and the items in them.
+This python program creates a web application called Catalog Application.  This application contains a database of categories and the items in them.
 
 Users can choose to browse the catalog without logging in, but will be unable add, edit or delete items.  Users can login using Google or Facebook.
 
